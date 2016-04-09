@@ -40,10 +40,10 @@ But I prefer to think the pure function as the stateful function with ```()```, 
 
 ## Implementation
 
-The key idea is using the GADTs extension to hide the state type. If we do not use the GADTs extension, then ```SM a b``` will become ```SM s a b``` where ```s``` denotes the state type.
+The key idea is using the GADTs extension to hide the state(storage) type. If we do not use the GADTs extension, then ```SM a b``` will become ```SM s a b``` where ```s``` denotes the state type.
 
 ## To-Do
-  * Basic state machine
+  * Basic state machines
   * Event
   * More high order functions
   * Another DSL to build transition functions?
