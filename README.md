@@ -1,5 +1,6 @@
 # AFSM
-Arrowized functional state machines
+
+## Arrowized functional state machines
 
 The intuitive way to understand the state machine is that it have four parts, state, storage, input and output. Each state has its own transition function which takes the storage, the input and updates the storage and the state and gives the output.
 
@@ -29,7 +30,7 @@ The model of FRP is beautiful, but one diffcult thing is that the signal is cont
 
 However, what if we do not care about time, and only focus on the sequence of input. There is reason to believe that computational tasks usually do not care about time. For example, the parsing process. So ```[a]``` and ```[Event a]``` are the only things we expected.
 
-### State(Storage)
+### Stateful function(Storage)
 
 Usually, the state can be abstracted to the summary of input history. With ArrowLoop class, we can implement a stateful function in FPR.
 If we want to get a function ```SF a b``` with state ```c```. We implement a function ```SF (a, c) (b, c)```, and use
