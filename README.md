@@ -1,7 +1,7 @@
 # AFSM
 Arrowized functional state machines
 
-The intuitive way to understand the state machine is that it have four parts, state, storage, input and output. Each state has its own transition function which take the storage, the input and update the storage and the state and give the output.
+The intuitive way to understand the state machine is that it have four parts, state, storage, input and output. Each state has its own transition function which takes the storage, the input and updates the storage and the state and gives the output.
 
 The abstract way is thinking the state machine as the stateful function. 
 
