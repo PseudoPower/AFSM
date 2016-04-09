@@ -12,6 +12,7 @@ The ```SM a b``` type denotes stateful functions from ```a``` to ```b```.
 exec :: SM a b -> [a] -> (SM a b, [b])
 
 From the theoretical perspective, this model is a simplified version of FRP, but adding states on functions directly.
+
 From the engineering perspective, the other difference from AFRP is that we provide the constructor to use the transition function ```trans::r->a->(SM a b, b)``` to build ```SM a b``` directly.
 
 ### Simplifed model
