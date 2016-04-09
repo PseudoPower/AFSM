@@ -33,7 +33,7 @@ But I prefer to think the pure function as the stateful function with ```()```, 
 
 ## Implementation
 
-The key idea is using the GADTs extension to hide the state type. If we do not use the GADTs extension, then ```SM a b``` will become ```SM r a b``` where ```r``` denotes the state type or the resource type.
+The key idea is using the GADTs extension to hide the state type. If we do not use the GADTs extension, then ```SM a b``` will become ```SM r a b``` where ```r``` denotes the state type.
 
 ## To-Do
   * Basic state machine
