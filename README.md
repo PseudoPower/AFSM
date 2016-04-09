@@ -11,11 +11,12 @@ The ```SM a b``` type denotes stateful functions from ```a``` to ```b```.
 
 exec :: SM a b -> [a] -> (SM a b, [b])
 
-The model is a simplified version of FPR, but adding states on functions directly.
+From the theoretical perspective, this model is a simplified version of FRP, but adding states on functions directly.
+From the engineering perspective, the other different from AFRP is that we provide constructors to use the transition function ```trans::r->a->(SM a b, b)``` to build ```SM a b``` directly. 
 
 ### Simplifed model
 
-In functional reactive programming(FRP), the key concepts are the signal, ```Signal a :: Time -> a```, and the signal function is from signal to signal, ```SF a b :: Signal a -> Signal b```.
+In functional reactive programming(FRP), the key concepts are the signal, ```Signal a :: Time -> a```, and the signal function from signal to signal, ```SF a b :: Signal a -> Signal b```.
 
 The model is beautiful, but one diffcult thing of FPR is that the signal is continuous function, and our computers are discrete systems. 
 
