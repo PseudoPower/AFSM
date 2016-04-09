@@ -8,7 +8,7 @@ description: Arrowized functional state machines.
 homepage:            https://github.com/FiveEye/AFSM
 license:             MIT
 license-file:        LICENSE
-author:              Hanzhong Xu
+author:              Hanzhong Xu, Meng Meng
 maintainer:          hanzh.xu@gmail.com
 -- copyright:           
 category:            FRP
