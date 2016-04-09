@@ -1,6 +1,12 @@
 # AFSM
 Arrowized functional state machines
 
+The intuitive way to understand the state machine is that it have four part, state, storage, input, output. Each state has its own transition function which take the storage, the input and update the storage and the state and give the output.
+
+The abstract way is thinking the state machine as the stateful function. 
+
+Our plan is using the stateful function as the interface, but users can build state machines in an intuitive way.
+
 ## Basic Concepts
 
 The ```SM a b``` type denotes stateful functions from ```a``` to ```b```.
@@ -39,3 +45,4 @@ The key idea is using the GADTs extension to hide the state type. If we do not u
   * Basic state machine
   * Event
   * More high order functions
+  * Another DSL to build transition functions?
