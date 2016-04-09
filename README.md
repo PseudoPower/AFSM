@@ -20,7 +20,7 @@ exec :: SM a b -> [a] -> (SM a b, [b])
 
 From the theoretical perspective, this model is a simplified version of FRP, but adding states on functions directly.
 
-From the engineering perspective, the other difference from AFRP is that we provide the constructor to use the transition function ```trans::s->a->(SM a b, b)``` to build ```SM a b``` directly.
+From the engineering perspective, the other difference from AFRP is that we provide the constructor to use the transition function ```trans :: s -> a -> (SM a b, b)``` to build ```SM a b``` directly.
 
 ### Simplifed model
 
@@ -28,15 +28,13 @@ In functional reactive programming(FRP), the key concepts are the signal, ```Sig
 
 The model of FRP is beautiful, but one diffcult thing is that the signal is continuous function, and our computers are discrete systems. 
 
-However, what if we do not care about time, and only focus on the sequence of input. There is reason to believe that computational tasks usually do not care about time. For example, the parsing process. So ```[a]``` and ```[Event a]``` are the only things we expected.
+However, what if we do not care about time, and only focus on the sequence of input. There is reason to believe that computational tasks usually are time-insensitive. For example, the parsing process. So ```[a]``` and ```[Event a]``` are the only things we expected in our system.
 
 ### Stateful function(Storage)
 
-Usually, the state can be abstracted to the summary of input history. With ArrowLoop class, we can implement a stateful function in FPR.
-If we want to get a function ```SF a b``` with state ```c```. We implement a function ```SF (a, c) (b, c)```, and use
-```loop :: (SF (a, c) (b, c))->SF a b``` to get the stateful function ```SF a b```.
+Usually, the state can be abstracted to the summary of input history. With ArrowLoop class, we can implement a stateful function in FPR. For example, if we want to get a function ```SF a b``` with state ```c```. We implement a function ```SF (a, c) (b, c)```, and use ```loop :: SF (a, c) (b, c) -> SF a b``` to get the stateful function ```SF a b```.
 
-But I prefer to think the pure function as the stateful function with ```()```, because the stateful function gives us a more natural way to represent the control flow. Also, it give us the ability to switch the function itself based on different inputs.
+But I prefer to think the pure function as the stateful function with state ```()```, because the stateful function gives us a more natural way to represent the control flow. Also, it give us the ability to switch the function itself based on different inputs.
 
 ## Implementation
 
