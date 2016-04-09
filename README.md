@@ -18,9 +18,9 @@ The ```SM a b``` type denotes stateful functions from ```a``` to ```b```.
 
 exec :: SM a b -> [a] -> (SM a b, [b])
 
-From the theoretical perspective, this model is a simplified version of FRP, but adding states on functions directly.
+From the theoretical perspective, this model is a simplified version of FRP, but adding states on functions directly. In another word, it is switching the focus from time to states.
 
-From the engineering perspective, the other difference from AFRP is that we provide the constructor to use the transition function ```trans :: s -> a -> (SM a b, b)``` to build ```SM a b``` directly.
+From the engineering perspective, the other difference from AFRP is that we provide the constructor to use the transition function ```trans :: s -> a -> (SM a b, b)``` to build ```SM a b``` directly. 
 
 ### Simplifed model
 
@@ -30,9 +30,11 @@ The model of FRP is beautiful, but one diffcult thing is that the signal is cont
 
 However, what if we do not care about time, and only focus on the sequence of input. There is reason to believe that computational tasks usually are time-insensitive. For example, the parsing process. So ```[a]``` and ```[Event a]``` are the only things we expected in our system.
 
+For discrete system, simplifying the input type is kind of generalizing ```[(Time,a)]``` to ```[a]```. This simplifed model is still able to process the time sequences by using ```[(Time, a)]``` as the input. In conclusion, we doesn't consider time as an essential part of the input, but if the input involves time, users can add time back as a part of the input.
+
 ### Stateful function(Storage)
 
-Usually, the state can be abstracted to the summary of input history. With ArrowLoop class, we can implement a stateful function in FPR. For example, if we want to get a function ```SF a b``` with state ```c```. We implement a function ```SF (a, c) (b, c)```, and use ```loop :: SF (a, c) (b, c) -> SF a b``` to get the stateful function ```SF a b```.
+Usually, the state can be abstracted to the summary of input history. With ArrowLoop instance, we can create stateful functions in FPR. For example, if we want to get a function ```SF a b``` with state ```c```. We implement a function ```SF (a, c) (b, c)```, and use ```loop :: SF (a, c) (b, c) -> SF a b``` to get the stateful function ```SF a b```.
 
 But I prefer to think the pure function as the stateful function with state ```()```, because the stateful function gives us a more natural way to represent the control flow. Also, it give us the ability to switch the function itself based on different inputs.
 
