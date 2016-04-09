@@ -1,7 +1,7 @@
 # AFSM
 Arrowized functional state machines
 
-The intuitive way to understand the state machine is that it have four part, state, storage, input, output. Each state has its own transition function which take the storage, the input and update the storage and the state and give the output.
+The intuitive way to understand the state machine is that it have four part, state, storage, input and output. Each state has its own transition function which take the storage, the input and update the storage and the state and give the output.
 
 The abstract way is thinking the state machine as the stateful function. 
 
@@ -19,7 +19,7 @@ exec :: SM a b -> [a] -> (SM a b, [b])
 
 From the theoretical perspective, this model is a simplified version of FRP, but adding states on functions directly.
 
-From the engineering perspective, the other difference from AFRP is that we provide the constructor to use the transition function ```trans::r->a->(SM a b, b)``` to build ```SM a b``` directly.
+From the engineering perspective, the other difference from AFRP is that we provide the constructor to use the transition function ```trans::s->a->(SM a b, b)``` to build ```SM a b``` directly.
 
 ### Simplifed model
 
@@ -29,7 +29,7 @@ The model of FRP is beautiful, but one diffcult thing is that the signal is cont
 
 However, what if we do not care about time, and only focus on the sequence of input. There is reason to believe that computational tasks usually do not care about time. For example, the parsing process. So ```[a]``` and ```[Event a]``` are the only things we expected.
 
-### State
+### State(Storage)
 
 Usually, the state can be abstracted to the summary of input history. With ArrowLoop class, we can implement a stateful function in FPR.
 If we want to get a function ```SF a b``` with state ```c```. We implement a function ```SF (a, c) (b, c)```, and use
@@ -39,7 +39,7 @@ But I prefer to think the pure function as the stateful function with ```()```, 
 
 ## Implementation
 
-The key idea is using the GADTs extension to hide the state type. If we do not use the GADTs extension, then ```SM a b``` will become ```SM r a b``` where ```r``` denotes the state type.
+The key idea is using the GADTs extension to hide the state type. If we do not use the GADTs extension, then ```SM a b``` will become ```SM s a b``` where ```s``` denotes the state type.
 
 ## To-Do
   * Basic state machine
