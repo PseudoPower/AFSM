@@ -2,7 +2,7 @@
 
 ## State machine
 
-The intuitive way to understand the state machine is that it have four parts, state, storage, input and output. Each state has its own transition function which takes the storage, the input and updates the storage and the state and gives the output.
+The intuitive way to understand the state machine is that it have four parts, state, storage, input and output. Each state has its own transition function which takes the storage and the input, updates the storage and the state, and gives the output.
 
 The abstract way is thinking the state machine as the stateful function. 
 
