@@ -2,7 +2,7 @@
 
 -----------------------------------------------------------------------------
 -- |
--- Module      :  
+-- Module      :  Control.AFSM
 -- Copyright   :  (c) Hanzhong Xu 2016,
 -- License     :  MIT License
 --
