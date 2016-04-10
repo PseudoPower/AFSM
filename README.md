@@ -6,11 +6,11 @@ The intuitive way to understand the state machine is that it have four parts, st
 
 The abstract way is thinking the state machine as the stateful function.
 
-Now, let us put these two ways together. Our plan is using the stateful function as the interface, but users can build state machines in an intuitive way.
+Now, let us put these two ways together. Our plan is using the stateful function as the interface(making it to be an instance of the ```Arrow``` type class), but users can build state machines in an intuitive way.
 
 ## Basic Concepts
 
-The ```SM a b``` type denotes stateful functions from ```a``` to ```b```.
+The ```SM a b``` type denotes stateful functions from ```a``` to ```b```. Also, It is an instance of the ```Arrow``` type class.
 ```
 data SM a b
 --
