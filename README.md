@@ -71,3 +71,8 @@ The key idea is using the GADTs extension to hide the state(storage) type. If we
 [Functional Reactive Programming, Continued](http://haskell.cs.yale.edu/wp-content/uploads/2011/02/workshop-02.pdf)
 
 [Yampa - Haskell Wiki](https://wiki.haskell.org/Yampa)
+
+[Haskell/Arrow tutorial](https://en.wikibooks.org/wiki/Haskell/Arrow_tutorial)
+
+  * Just realize that both AFRP and our model is very similar with ```Circuit```. Actually, FRP is simulating signal systems, also it's why I prefer to use the name ```signal function``` instead of ```behaivor function```. On other hand, AFRP is AFSM with fix storage type ```DTime```, and the benefit is that it does not require the GADTs extension.
+
