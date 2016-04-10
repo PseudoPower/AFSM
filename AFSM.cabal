@@ -13,8 +13,8 @@ maintainer:          hanzh.xu@gmail.com
 -- copyright:           
 category:            FRP
 build-type:          Simple
--- extra-source-files:  
---   examples/RPN.hs
+extra-source-files:  
+  examples/RPN.hs
 cabal-version:       >=1.10
 library
   exposed-modules:     Control.AFSM
