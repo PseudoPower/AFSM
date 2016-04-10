@@ -118,6 +118,55 @@ fanoutSM sm0 sm1 = SM (sm0, sm1) f2
         (sm0', b) = f0 r0 a
         (sm1', c) = f1 r1 a
 
+-- ArrowChoice 
+
+leftSM :: SM a b -> SM (Either a c) (Either b c)
+leftSM sm = SM sm f1
+  where
+    f1 sm' (Right c) = (SM sm' f1, Right c)
+    f1 (SM r0 f0) (Left a) = (SM sm'' f1, Left b)
+      where
+        (sm'', b) = f0 r0 a
+
+rightSM :: SM a b -> SM (Either c a) (Either c b)
+rightSM sm = SM sm f1
+  where
+    f1 sm' (Left c) = (SM sm' f1, Left c)
+    f1 (SM r f) (Right a) = ((SM sm'' f1), Right b)
+      where
+        (sm'', b) = f r a
+        
+sumSM :: SM a b -> SM c d -> SM (Either a c) (Either b d)
+sumSM sm0 sm1 = SM (sm0, sm1) f2
+  where
+    f2 (SM r0 f0, sm1') (Left a)  = let (sm0', b) = f0 r0 a in (SM (sm0', sm1') f2, Left b)
+    f2 (sm0', SM r1 f1) (Right c) = let (sm1', d) = f1 r1 c in (SM (sm0', sm1') f2, Right d)
+
+faninSM :: SM a c -> SM b c -> SM (Either a b) c
+faninSM sm0 sm1 = SM (sm0, sm1) f2
+  where
+    f2 (SM r0 f0, sm1') (Left a)  = let (sm0', c) = f0 r0 a in (SM (sm0', sm1') f2, c)
+    f2 (sm0', SM r1 f1) (Right b) = let (sm1', c) = f1 r1 b in (SM (sm0', sm1') f2, c)
+
+instance ArrowChoice SM where
+  left = leftSM
+  right = rightSM
+  (+++) = sumSM
+  (|||) = faninSM
+
+-- ArrowLoop
+-- SM has build-in loop structure, but adding one more instance is harmless, :)
+
+loopSM :: SM (a, c) (b, c) -> SM a b
+loopSM sm = SM sm f1
+  where
+    f1 (SM r f) a = (SM sm' f1, b)
+      where
+        (sm', (b, c)) = f r (a, c)
+
+instance ArrowLoop SM where
+    loop = loopSM
+        
 -- Evaluation
 
 exec :: SM a b -> [a] -> (SM a b, [b])

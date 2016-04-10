@@ -1,5 +1,5 @@
 name:                AFSM
-version:             0.1.0.0
+version:             0.1.1.0
 synopsis:            Arrowized functional state machines
 description: Arrowized functional state machines.
              This module is inspired by Yampa and the paper 
