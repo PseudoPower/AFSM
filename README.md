@@ -11,13 +11,31 @@ Now, let us put these two ways together. Our plan is using the stateful function
 ## Basic Concepts
 
 The ```SM a b``` type denotes stateful functions from ```a``` to ```b```.
+```
+data SM a b
+--
+--    a  /--------\  b
+--  >--->| SM a b |>--->
+--       \--------/
 
 (>>>) :: SM a b -> SM b c -> SM a c
+--
+--    a  /--------\  b  /--------\  c
+--  >--->| SM a b |>--->| SM b c |>--->
+--       \--------/     \--------/
 
 (&&&) :: SM a b -> SM a c -> SM a (b, c)
+--
+--           /--------\  b
+--      /--->| SM a b |>---\
+--    a |    \--------/    | (b,c)
+--  >---|                  |------->
+--      |    /--------\  c |
+--      \--->| SM a c |>---/
+--           \--------/     
 
 exec :: SM a b -> [a] -> (SM a b, [b])
-
+```
 From the theoretical perspective, this model is a simplified version of FRP, but adding states on functions directly. In another word, it is switching the focus from time to states.
 
 From the engineering perspective, the other difference from AFRP(Yampa) is that we provide the constructor to use the transition function ```trans :: s -> a -> (SM a b, b)``` to build ```SM a b``` directly. 
@@ -48,7 +66,7 @@ The key idea is using the GADTs extension to hide the state(storage) type. If we
   * More high order functions
   * Another DSL to build transition functions?
   
-## Reference
+## References
 
 [Functional Reactive Programming, Continued](http://haskell.cs.yale.edu/wp-content/uploads/2011/02/workshop-02.pdf)
 
