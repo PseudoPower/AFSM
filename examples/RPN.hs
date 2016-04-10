@@ -89,12 +89,12 @@ post2ret = execSM post2ret'
 
 -- the SM composed of in2post and post2ret
 --
---         /---------------------------\
---   Token |          [Token]          | [May Int]
---  >----->| in2post >-------> post2ret|>--------->
---         |                           |
---         \---------------------------/
---                    in2ret
+--         /----------------------------\
+--   Token |          [Token]           | [Maybe Int]
+--  >----->| in2post >-------> post2ret |>----------->
+--         |                            |
+--         \----------------------------/
+--                     in2ret
 --
 in2ret :: SM Token [Maybe Int]
 in2ret = proc x -> do
