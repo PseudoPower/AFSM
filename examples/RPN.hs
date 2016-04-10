@@ -48,11 +48,13 @@ trans0 xs op =
 
     
 -- the SM converting infix to postfix
+--
+--   Token /---------\ [Token]
+--  >----->| in2post |>------->
+--         \---------/
+--
 in2post :: SM Token [Token]
 in2post = simpleSM [End] trans0
-
-out1 = concat $ snd $ exec in2post test1
-out2 = concat $ snd $ exec in2post test2
 
 f :: Op -> Int -> Int -> Int
 f Add x y = x + y
@@ -66,13 +68,35 @@ trans1 xs (Num x) = (x:xs, Nothing)
 trans1 (x:y:xs) (Op o) = ((f o y x):xs, Nothing)
 
 -- the SM evaluating postfix expression
+--
+--   Token /-----------\ Maybe Int
+--  >----->| post2ret' |>--------->
+--         \-----------/
+--
 post2ret' :: SM Token (Maybe Int)
 post2ret' = simpleSM [] trans1
 
+
+--
+--   [Token] /----------\ [Maybe Int]
+--  >------->| post2ret |>----------->
+--           \----------/
+--
 post2ret :: SM [Token] [Maybe Int]
 post2ret = execSM post2ret'
 
--- the SM conbining in2post and post2ret
+
+
+-- the SM composed of in2post and post2ret
+--
+--         /---------------------------\
+--   Token |          [Token]          | [May Int]
+--  >----->| in2post >-------> post2ret|>--------->
+--         |                           |
+--         \---------------------------/
+--                    in2ret
+--
+in2ret :: SM Token [Maybe Int]
 in2ret = proc x -> do
    y <- in2post -< x
    post2ret -< y
