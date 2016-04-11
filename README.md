@@ -61,6 +61,13 @@ But I prefer to think the pure function as the stateful function with state ```(
 
 The key idea is using the GADTs extension to hide the state(storage) type. If we do not use the GADTs extension, then ```SM a b``` will become ```SM s a b``` where ```s``` denotes the state(storage) type.
 
+## Examples
+
+### Reverse Polish notation(RPN.hs)
+
+It is also known as postfix notation, and it is very straightforward example. The input is the infix expression, and the output is the value. First, we build a SM named in2post to convert infix notation to postfix expression. Then we build a SM named post2ret to evaluate the valus. Finally, we use them to compose ```in2ret = in2post >>> post2ret```.
+
+
 ## To-Do
   * Basic state machines
   * Event

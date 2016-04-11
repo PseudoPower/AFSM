@@ -32,6 +32,9 @@ module Control.AFSM (
   newSM,
   simpleSM,
   
+  -- * Basic State Machines
+  constSM,
+  
   -- * High order functions
   execSM,
   
@@ -54,9 +57,11 @@ data SM a b where
   
 -- Constructors
 
+-- | newSM is the same with SM constructor.
 newSM :: s -> (SMState s a b) -> SM a b
 newSM = SM
 
+-- | simpleSM is to build a simple SM which have only one SMState.
 simpleSM :: s -> (s -> a -> (s, b)) -> SM a b
 simpleSM s f = SM s f'
   where
@@ -64,6 +69,7 @@ simpleSM s f = SM s f'
     
 -- Basic State Machines
 
+-- | constSM build a SM which always return b
 constSM :: b -> SM a b
 constSM b = SM () f
   where
@@ -181,6 +187,7 @@ instance ArrowLoop SM where
         
 -- Evaluation
 
+-- | execute SM a b with input [a].
 exec :: SM a b -> [a] -> (SM a b, [b])
 exec sm [] = (sm, [])
 exec (SM s f) (x:xs) = (sm'', b:bs)
@@ -189,6 +196,7 @@ exec (SM s f) (x:xs) = (sm'', b:bs)
     (sm'', bs) = (exec sm' xs)
     
 -- High order functions
-    
+ 
+-- | execSM converts SM a b -> SM [a] [b], it is very useful to compose SM a [b] and SM b c to SM a [c].
 execSM :: SM a b -> SM [a] [b]
 execSM sm = simpleSM sm exec

@@ -145,7 +145,7 @@ parseStr (x:xs) =
   if elem x ",\n" then End : (parseStr xs)
   else if x == ' ' then parseStr xs
   else if isNum x then
-    let (ys, zs) = span isNum xs in (Num $ read (x:ys)):(parseStr xs)
+    let (ys, zs) = span isNum xs in (Num $ read (x:ys)):(parseStr zs)
   else if elem x "()+-*/" then
     (parseOp x):(parseStr xs)
   else 
