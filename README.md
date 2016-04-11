@@ -12,19 +12,36 @@ Now, let us put these two ways together. Our plan is using the stateful function
 
 The ```SM a b``` type denotes stateful functions from ```a``` to ```b```. Also, It is an instance of the ```Arrow``` type class.
 ```
-data SM a b
+-- data SM a b
 --
 --    a  /--------\  b
 --  >--->| SM a b |>--->
 --       \--------/
-
-(>>>) :: SM a b -> SM b c -> SM a c
+--
+-- (>>>) :: SM a b -> SM b c -> SM a c
 --
 --    a  /--------\  b  /--------\  c
 --  >--->| SM a b |>--->| SM b c |>--->
 --       \--------/     \--------/
-
-(&&&) :: SM a b -> SM a c -> SM a (b, c)
+--
+--
+-- first :: SM a b -> SM (a, c) (b, c)
+--
+--    a  /--------------\  b
+--  >--->|>-> SM a b >->|>--->
+--       |              |
+--  >--->|>------------>|>--->
+--    c  \--------------/  c
+--
+-- (***) :: SM a b -> SM c d -> SM (a, c) (b, d)
+--
+--    a  /--------------\  b
+--  >--->|>-> SM a b >->|>--->
+--       |              |
+--  >--->|>-> SM c d >->|>--->
+--    c  \--------------/  d
+--
+-- (&&&) :: SM a b -> SM a c -> SM a (b, c)
 --
 --            /--------\  b
 --       /--->| SM a b |>---\
@@ -32,20 +49,21 @@ data SM a b
 --  >--->|                  |>------->
 --       |    /--------\  c |
 --       \--->| SM a c |>---/
---            \--------/     
+--            \--------/
+--
 
 exec :: SM a b -> [a] -> (SM a b, [b])
 ```
 
 From a theoretical point of view, this model is a simplified version of FRP, but adding states on functions directly. In another word, it is switching the focus from time to states.
 
-From an engnieering point of view, the other difference from AFRP(Yampa) is that we provide the constructor to use the transition function ```trans :: s -> a -> (SM a b, b)``` to build ```SM a b``` directly. 
+From an engnieering point of view, the other difference from AFRP(Yampa) is that we provide the constructor to use the transition function ```trans :: s -> a -> (SM a b, b)``` to build ```SM a b``` directly.
 
 ### Simplifed model
 
 In functional reactive programming(FRP), the key concepts are the signal, ```Signal a :: Time -> a```, and the signal function from signal to signal, ```SF a b :: Signal a -> Signal b```.
 
-The model of FRP is beautiful, but one diffcult thing is that the signal is continuous function, and our computers are discrete systems. 
+The model of FRP is beautiful, but one diffcult thing is that the signal is continuous function, and our computers are discrete systems.
 
 However, what if we do not care about time, and only focus on the sequence of input. There is reason to believe that computational tasks usually are time-insensitive. For example, the parsing process. So ```[a]``` and ```[Event a]``` are the only things we expected in our system.
 
@@ -73,7 +91,7 @@ It is also known as postfix notation, and it is very straightforward example. Th
   * Event
   * More high order functions
   * Another DSL to build transition functions?
-  
+
 ## References
 
 [Functional Reactive Programming, Continued](http://haskell.cs.yale.edu/wp-content/uploads/2011/02/workshop-02.pdf)
@@ -83,4 +101,3 @@ It is also known as postfix notation, and it is very straightforward example. Th
 [Haskell/Arrow tutorial](https://en.wikibooks.org/wiki/Haskell/Arrow_tutorial)
 
   * Just realize that both AFRP and our model are very similar with ```Circuit```. Actually, FRP is simulating signal systems, also it's why I prefer to use the name ```signal function``` instead of ```behavior function```. On the other hand, AFRP is AFSM with fix storage type ```DTime```, and the benefit is that it does not require the GADTs extension.
-
