@@ -58,7 +58,7 @@ trans0 xs op =
 --         \---------/
 --
 in2post :: SM Token [Token]
-in2post = simpleSM [End] trans0
+in2post = simpleSM trans0 [End]
 
 f :: Op -> Int -> Int -> Int
 f Add x y = x + y
@@ -78,7 +78,7 @@ trans1 (x:y:xs) (Op o) = ((f o y x):xs, Nothing)
 --         \-----------/
 --
 post2ret' :: SM Token (Maybe Int)
-post2ret' = simpleSM [] trans1
+post2ret' = simpleSM trans1 []
 
 
 --
@@ -107,7 +107,7 @@ in2ret = proc x -> do
 
 {-
 historySM :: SM a [a]
-historySM = simpleSM [] (\xs a -> (a:xs, a:xs))
+historySM = simpleSM (\xs a -> (a:xs, a:xs)) []
 
 lst2str:: Show a => SM [a] String
 lst2str = arr (let f = \xs -> if (null xs) then "" else (show (head xs)) ++ f (tail xs) in f)
