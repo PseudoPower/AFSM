@@ -36,9 +36,10 @@ data SM a b
 
 exec :: SM a b -> [a] -> (SM a b, [b])
 ```
-From the theoretical perspective, this model is a simplified version of FRP, but adding states on functions directly. In another word, it is switching the focus from time to states.
 
-From the engineering perspective, the other difference from AFRP(Yampa) is that we provide the constructor to use the transition function ```trans :: s -> a -> (SM a b, b)``` to build ```SM a b``` directly. 
+From a theoretical point of view, this model is a simplified version of FRP, but adding states on functions directly. In another word, it is switching the focus from time to states.
+
+From an engnieering point of view, the other difference from AFRP(Yampa) is that we provide the constructor to use the transition function ```trans :: s -> a -> (SM a b, b)``` to build ```SM a b``` directly. 
 
 ### Simplifed model
 
