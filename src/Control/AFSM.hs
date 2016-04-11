@@ -34,9 +34,14 @@ module Control.AFSM (
   
   -- * Basic State Machines
   constSM,
+  idSM,
+  foldlSM,
+  foldlDelaySM,
+  delaySM,
   
   -- * High order functions
   execSM,
+  concatSM,
   
   -- * Evaluation
   exec
@@ -48,7 +53,8 @@ import Control.Arrow
 
 import Control.AFSM.Event
 
-
+-- | 'SMState' is the transition function
+--     s: atorage, a: input, b: output
 type SMState s a b = (s -> a -> (SM a b, b))
 
 -- | 'SM' is a type representing a state machine.
@@ -57,7 +63,7 @@ data SM a b where
   
 -- Constructors
 
--- | the SM constructor.
+-- | It is the same with the SM constructor.
 newSM :: (SMState s a b) -> s -> SM a b
 newSM = SM
 
@@ -69,11 +75,52 @@ simpleSM f s = SM f' s
     
 -- Basic State Machines
 
--- | constSM build a SM which always return b
+-- | build a SM which always return b
 constSM :: b -> SM a b
 constSM b = SM f ()
   where
-    f _ a = ((constSM b), b)
+    f _ _ = ((constSM b), b)
+    
+foldlSM :: (s -> a -> s) -> s -> SM a s
+foldlSM f s = SM f' s
+  where
+    f' s' a' = let s'' = f s' a' in (SM f' s'', s'')
+
+foldlDelaySM :: (s -> a -> s) -> s -> SM a s
+foldlDelaySM f s = SM f' s
+  where
+    f' s' a' = let s'' = f s' a' in (SM f' s'', s')
+
+    
+-- delaySM = foldlDelaySM (const id)
+delaySM :: a -> SM a a
+delaySM a = SM f a
+  where
+    f s' a' = ((SM f a'), s')
+
+holdSM :: a -> SM (Event a) a    
+holdSM = undefined
+ 
+filterSM :: (a -> Bool) -> SM a (Event a)
+filterSM = undefined
+
+-- High order functions
+ 
+-- | converts SM a b -> SM [a] [b], it is very useful to compose SM a [b] and SM b c to SM a [c].
+execSM :: SM a b -> SM [a] [b]
+execSM sm = simpleSM exec sm
+
+concatSM :: SM a [[b]] -> SM a [b]
+concatSM = fmap concat
+
+eventOutSM :: SM a b -> SM a (Event b)
+eventOutSM = fmap Event
+
+eventSM :: SM a b -> SM (Event a) (Event b)
+eventSM = undefined
+
+slowdownSM :: SM a [b] -> SM a (Event b)
+slowdownSM = undefined
 
 -- Category instance    
 
@@ -171,7 +218,17 @@ instance ArrowChoice SM where
   right = rightSM
   (+++) = sumSM
   (|||) = faninSM
+  
+  
+-- ArrowApply
 
+appSM :: SM (SM a b, a) b
+appSM = SM f1 ()
+  where
+    f1 () ((SM f s), a) = (SM f1 (), snd $ f s a)
+
+instance ArrowApply SM where
+  app = appSM
 -- ArrowLoop
 -- SM has build-in loop structure, but adding one more instance is harmless, :)
 
@@ -186,7 +243,7 @@ instance ArrowLoop SM where
     loop = loopSM
     
 -- Functor
-
+-- fmapSM f sm = sm >>> arr f
 fmapSM :: (b -> c) -> SM a b -> SM a c
 fmapSM f sm = SM f1 sm
   where
@@ -207,8 +264,5 @@ exec (SM f s) (x:xs) = (sm'', b:bs)
     (sm', b) = f s x
     (sm'', bs) = (exec sm' xs)
     
--- High order functions
- 
--- | converts SM a b -> SM [a] [b], it is very useful to compose SM a [b] and SM b c to SM a [c].
-execSM :: SM a b -> SM [a] [b]
-execSM sm = simpleSM exec sm
+
+

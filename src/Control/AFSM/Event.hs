@@ -17,5 +17,5 @@ module Control.AFSM.Event where
 
 
 
-
-data Event a = E a | NoE | ErrE String | ExitE deriving (Show, Eq, Ord)
+-- | 'Event' type, there are 4 different events: event a, no event, error event string and exit event.
+data Event a = Event a | NoEvent | ErrEvent String | ExitEvent deriving (Show, Eq, Ord)
