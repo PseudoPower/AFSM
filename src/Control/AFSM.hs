@@ -18,8 +18,9 @@
 -----------------------------------------------------------------------------
 
 module Control.AFSM (
+  -- module Control.Category,
   module Control.Arrow,
-
+  
   Event(..),
 
   -- * The 'SM' type
@@ -35,6 +36,7 @@ module Control.AFSM (
   -- * Basic State Machines
   constSM,
   idSM,
+  composeSM,
   foldlSM,
   foldlDelaySM,
   delaySM,
@@ -44,10 +46,12 @@ module Control.AFSM (
   concatSM,
 
   -- * Evaluation
+  step,
   exec
 
 ) where
 
+-- import Prelude hiding ((.))
 import Control.Category
 import Control.Arrow
 
@@ -239,7 +243,7 @@ instance ArrowApply SM where
   app = appSM
 
 -- ArrowLoop
--- SM has build-in loop structure, but the ArrowLoop instance helps sharing storage between SMs, and adding one more instance is harmless, :)
+-- SM has build-in loop structure, but the ArrowLoop instance helps us sharing storage between SMs, and adding one more instance is harmless, :)
 
 loopSM :: SM (a, c) (b, c) -> SM a b
 loopSM sm = SM f1 sm
@@ -265,7 +269,12 @@ instance Functor (SM a) where
 
 -- Evaluation
 
+-- | run SM a b with a.
+step :: SM a b -> a -> (SM a b, b)
+step (SM f s) a = f s a
+
 -- | execute SM a b with input [a].
+--   Also, it is the map function for SM, perhaps, We should define our own Functor class, the SMFunctor!
 exec :: SM a b -> [a] -> (SM a b, [b])
 exec sm [] = (sm, [])
 exec (SM f s) (x:xs) = (sm'', b:bs)
