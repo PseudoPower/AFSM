@@ -23,7 +23,7 @@ module Control.AFSM (
   Event(..),
 
   -- * The 'SM' type
-  SM,
+  SM(..),
 
   -- * The 'SMState' type
   SMState,
@@ -53,11 +53,17 @@ import Control.Arrow
 
 import Control.AFSM.Event
 
--- | 'SMState' is the transition function
+-- | 'SMState' is a type representing a transition function.
 --     s: storage, a: input, b: output
+--   Let's explain more about 'SMState'. When a state gets an input a, 
+--   it should do three things base on the storage and input: 
+--     find the next state, update storage and output b.
+--   That's why it looks like this:
+--     (storage -> a -> (SM newState newStorage, b))
 type SMState s a b = (s -> a -> (SM a b, b))
 
 -- | 'SM' is a type representing a state machine.
+--     (SMState s a b): initial state(transition function), s: initial storage
 data SM a b where
   SM :: (SMState s a b) -> s -> SM a b
 
@@ -233,7 +239,7 @@ instance ArrowApply SM where
   app = appSM
 
 -- ArrowLoop
--- SM has build-in loop structure, ArrowLoop helps sharing storage between SMs, and adding one more instance is harmless, :)
+-- SM has build-in loop structure, but the ArrowLoop instance helps sharing storage between SMs, and adding one more instance is harmless, :)
 
 loopSM :: SM (a, c) (b, c) -> SM a b
 loopSM sm = SM f1 sm
