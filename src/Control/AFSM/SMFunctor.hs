@@ -21,30 +21,35 @@ class SMFunctor f where
   smfmap sm a = snd $ smexec sm a 
 
 instance SMFunctor [] where
-  smexec = exec
+  smexec sm [] = (sm, [])
+  smexec (SM f s) (x:xs) = (sm'', b:bs)
+    where
+      (sm', b) = f s x
+      (sm'', bs) = (smexec sm' xs)
+
   
 instance SMFunctor Maybe where
   smexec sm Nothing = (sm, Nothing)
-  smexec sm (Just a) = (sm', Just b)
-    where (sm', b) = step sm a
+  smexec (SM f s) (Just a) = (sm', Just b)
+    where (sm', b) = f s a
     
 -- instance SMFunctor Identity where
 --   smexec sm a = (sm', Identity b)
 --     where (sm', b) = step sm (runIdentity a)
 
 instance SMFunctor ((->) r) where
-  smexec sm ra = (sm, rb)
+  smexec sm@(SM f s) ra = (sm, rb)
     where
-      rb r = snd $ step sm (ra r)
+      rb r = snd $ f s (ra r)
      
 instance SMFunctor (SM r) where
   smexec sm ra = (sm, composeSM sm ra)
   
 instance SMFunctor (Either a) where
   smexec sm (Left a) = (sm, Left a)
-  smexec sm (Right b) = (sm', Right c)
-    where (sm', c) = step sm b
+  smexec (SM f s) (Right b) = (sm', Right c)
+    where (sm', c) = f s b
     
 instance SMFunctor ((,) a) where
-  smexec sm (a, b) = (sm', (a, c))
-    where (sm', c) = step sm b
+  smexec (SM f s) (a, b) = (sm', (a, c))
+    where (sm', c) = f s b
