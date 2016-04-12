@@ -12,7 +12,13 @@ Now, let us put these two ways together. Our plan is using the stateful function
 
 The ```SM a b``` type denotes stateful functions from ```a``` to ```b```. Also, It is an instance of the ```Arrow``` type class.
 ```
--- data SM a b
+-- | 'SMState' is the type of transition functions
+--     s: storage, a: input, b: output
+type SMState s a b = (s -> a -> (SM a b, b))
+
+-- | 'SM' is the type representing state machines.
+data SM a b where
+  SM :: (SMState s a b) -> s -> SM a b
 --
 --    a  /--------\  b
 --  >--->| SM a b |>--->
@@ -52,12 +58,13 @@ The ```SM a b``` type denotes stateful functions from ```a``` to ```b```. Also, 
 --            \--------/
 --
 
+-- execute SM a b with input [a].
 exec :: SM a b -> [a] -> (SM a b, [b])
 ```
 
 From a theoretical point of view, this model is a simplified version of FRP, but adding states on functions directly. In another word, it is switching the focus from time to states.
 
-From an engnieering point of view, the other difference from AFRP(Yampa) is that we provide the constructor to use the transition function ```trans :: s -> a -> (SM a b, b)``` to build ```SM a b``` directly.
+From an engnieering point of view, the other difference from AFRP(Yampa) is that we provide the constructor to use the transition function ```SMState s a b :: s -> a -> (SM a b, b)``` to build ```SM a b``` directly where ```s``` donates the storage type.
 
 ### Simplifed model
 
