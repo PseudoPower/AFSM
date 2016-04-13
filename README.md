@@ -95,7 +95,7 @@ The key idea is using the GADTs extension to hide the state(storage) type. If we
 
 ### Reverse Polish notation([RPN.hs](https://github.com/PseudoPower/AFSM/blob/master/examples/RPN.hs))
 
-To run this example, just type ```make RPN```. The makefile will be maintained for all examples.
+To run this example, just type ```make RPN``` or ```ghci examples/RPN.hs -isrc/```. The makefile will be maintained for all examples. Then you can run ```main``` function and type some infix expressions, such as  ```3 * (2 - 3) + (4 - 2 * 3), 3 + 4 * 2 / (1 - 5) * 2 + 3```.
 
 It is also known as postfix notation, and it is very straightforward example. The input is the infix expression, and the output is the value. First, we build a SM named in2post to convert infix notation to postfix expression. Then we build a SM named post2ret to evaluate the valus. Finally, we use them to compose ```in2ret = in2post >>> post2ret```.
 
