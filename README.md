@@ -106,6 +106,28 @@ It is also known as postfix notation, and it is very straightforward example. Th
   * More high order functions
   * Another DSL to build transition functions?
 
+## Compare to other models
+
+|            | AFRP        | Circuit | ST Monad | State   | AFSM       |
+|:----------:|:-----------:|:-------:|:--------:|:-------:|:----------:|
+| Arrow      | Yes         | Yes     | No       | Yes     | Yes        |
+| Input      | [(DTime,a)] | [a]     | No       | [a]     | [a]        |
+| Output     | [(DTime,a)] | [b]     | b        | [b]     | [b]        |
+| Storage    | No          | No      | Fixed s  | Fixed s | Flexible s |
+| Transition | Yes         | Yes     | No       | No      | Yes        |
+
+Arrow represents whether it is an instance of the Arrow type class.
+
+Input represents the type of inputs. These models which have the build-in storage usually require a initial value of storage.
+
+Output represents the type of outputs, ```ST Monad``` have no input sequence, so it just return a value.
+
+Storage represents whether it has build-in storage.
+
+Transitinon represents whether it can switch the transition function dynamically.
+
+Base on their own models, both ```AFRP``` and ```AFSM``` have the Event type, but I think that it is unfair to add this concept into the table.
+
 ## References
 
 [Functional Reactive Programming, Continued](http://haskell.cs.yale.edu/wp-content/uploads/2011/02/workshop-02.pdf)
