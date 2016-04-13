@@ -112,7 +112,7 @@ It is also known as postfix notation, and it is very straightforward example. Th
 |:----------:|:-----------:|:----------:|:--------:|:-------:|:----------:|
 | Arrow      | Yes         | Yes        | No       | Yes     | Yes        |
 | Input      | [(DTime,a)] | [a]        | No       | [a]     | [a]        |
-| Output     | [(DTime,a)] | [b]        | b        | [b]     | [b]        |
+| Output     | [(DTime,b)] | [b]        | b        | [b]     | [b]        |
 | Storage    | No          | Flexible s | Fixed s  | Fixed s | Flexible s |
 | Scope      | No          | Local      | Global   | Global  | Local      |
 | Transition | Yes         | Yes        | No       | No      | Yes        |
@@ -125,7 +125,7 @@ Input represents the type of inputs.
 
 Output represents the type of outputs, ```ST Monad``` has no input sequence, so it just returns a value.
 
-Storage represents whether it has build-in storage. These models which have the global storage usually require a initial value of storage. It seems that ```Circuit``` doesn't have the storage. But that is easy to make it has the storage, and it is exactly what we are doing. ```newStateCircuit f s = Circuit (f s)```, then the ```newStateCircuit :: (s -> a -> (Circuit a b)) -> s -> Circuit``` has the same function with what our constructor does.
+Storage represents whether it has build-in storage. These models which have the global storage usually require a initial value of storage. It seems that ```Circuit a b = Circuit (a -> (Circuit a b, b))``` doesn't have the storage. But that is easy to make it has the storage, and it is exactly what we are doing. ```newStateCircuit f s = Circuit (f s)```, then the ```newStateCircuit :: (s -> a -> (Circuit a b)) -> s -> Circuit``` has the same function with what our constructor does. This fact may focuses us to remove GADTs extension, and keep tracing the storage type.
 
 Scope represents whether the storage is global or local. In ```ST Monad``` and ```State``` model, all functions share the storage with each others, that means that a function change the storage, and send the updated storage to the next function. That's why the type of their storage is fixed. But in our model, each state machine has its own storage and the types of storage in different machines can be different. And machines cannot access other machines' storage, so the storage in our model represents the local variables! And if we want a global storage, and share it between all the machines, we just need to change the input type from ```[a]``` to ```[(g, a)]``` where ```g``` denotes the type of the global storage.
 
