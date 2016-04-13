@@ -12,8 +12,13 @@ Now, let us put these two ways together. Our plan is using the stateful function
 
 The ```SM a b``` type denotes stateful functions from ```a``` to ```b```. Also, It is an instance of the ```Arrow``` type class.
 ```
--- | 'SMState' is the type of transition functions
+-- | 'SMState' is a type representing a transition function.
 --     s: storage, a: input, b: output
+--   Let's explain more about 'SMState'. When a state gets an input a, 
+--   it should do three things base on the storage and input: 
+--     find the next state, update storage and output b.
+--   That's why it looks like this:
+--     (storage -> a -> (SM newState newStorage, b))
 type SMState s a b = (s -> a -> (SM a b, b))
 
 -- | 'SM' is the type representing state machines.
@@ -89,6 +94,8 @@ The key idea is using the GADTs extension to hide the state(storage) type. If we
 ## Examples
 
 ### Reverse Polish notation([RPN.hs](https://github.com/PseudoPower/AFSM/blob/master/examples/RPN.hs))
+
+To run this example, just type ```make RPN```. The makefile will be maintained for all examples.
 
 It is also known as postfix notation, and it is very straightforward example. The input is the infix expression, and the output is the value. First, we build a SM named in2post to convert infix notation to postfix expression. Then we build a SM named post2ret to evaluate the valus. Finally, we use them to compose ```in2ret = in2post >>> post2ret```.
 
