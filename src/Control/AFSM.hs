@@ -1,4 +1,4 @@
-{-# LANGUAGE GADTs #-}
+{-# LANGUAGE ExistentialQuantification #-}
 
 -----------------------------------------------------------------------------
 -- |
@@ -52,9 +52,9 @@ module Control.AFSM (
 ) where
 
 -- import Prelude hiding ((.))
+import Data.Typeable
 import Control.Category
 import Control.Arrow
-
 import Control.AFSM.Event
 
 -- | 'SMState' is a type representing a transition function.
@@ -65,11 +65,12 @@ import Control.AFSM.Event
 --   That's why it looks like this:
 --     (storage -> a -> (SM newState newStorage, b))
 type SMState s a b = (s -> a -> (SM a b, b))
-
 -- | 'SM' is a type representing a state machine.
 --     (SMState s a b): initial state(transition function), s: initial storage
-data SM a b where
-  SM :: (SMState s a b) -> s -> SM a b
+data SM a b = forall s. SM (SMState s a b) s 
+
+-- data SM a b where
+--   SM :: (SMState s a b) -> s -> SM a b
 
 -- Constructors
 
