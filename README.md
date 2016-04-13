@@ -116,6 +116,8 @@ It is also known as postfix notation, and it is very straightforward example. Th
 | Storage    | No          | No      | Fixed s  | Fixed s | Flexible s |
 | Transition | Yes         | Yes     | No       | No      | Yes        |
 
+These models are included in the references.
+
 Arrow represents whether it is an instance of the Arrow type class.
 
 Input represents the type of inputs. These models which have the build-in storage usually require a initial value of storage.
@@ -129,17 +131,20 @@ Transitinon represents whether it can switch the transition function dynamically
 Base on their own models, both ```AFRP``` and ```AFSM``` have the Event type, but I think that it is unfair to add this concept into the table.
 
 ## References
-
 [Functional Reactive Programming, Continued](http://haskell.cs.yale.edu/wp-content/uploads/2011/02/workshop-02.pdf)
+  * the paper about AFRP.
 
 [Yampa - Haskell Wiki](https://wiki.haskell.org/Yampa)
+  * the implementation of AFRP
 
 [Haskell/Arrow tutorial](https://en.wikibooks.org/wiki/Haskell/Arrow_tutorial)
+  * the Arrow tutorial with ```Circuit``` model.
+  * Just realize that both AFRP and our model are very similar with ```Circuit```. Here is its definition, ```newtype Circuit a b = Circuit { unCircuit :: a -> (Circuit a b, b) }```. Actually, FRP is simulating signal systems, also it's why I prefer to use the name ```signal function``` instead of ```behavior function```. On the other hand, the transition function(TF) of AFRP is the same with the AFSM's TF with fix storage type ```DTime```, and the benefit is that it does not require the GADTs extension. However, AFRP doesn't store the DTime, because DTime comes from the input.
 
-  * Just realize that both AFRP and our model are very similar with ```Circuit```. Here is its definition, ```newtype Circuit a b = Circuit { unCircuit :: a -> (Circuit a b, b) }```. Actually, FRP is simulating signal systems, also it's why I prefer to use the name ```signal function``` instead of ```behavior function```. On the other hand, AFRP is AFSM with fix storage type ```DTime```, and the benefit is that it does not require the GADTs extension.
+[Control.Monad.ST](https://hackage.haskell.org/package/base-4.8.2.0/docs/Control-Monad-ST.html)
 
 [Arrows and computation](http://ipaper.googlecode.com/git-history/243b02cb56424d9e3931361122c5aa1c4bdcbbbd/Arrow/arrows-fop.pdf)
-
+  * the model in this chapter doesn't have a name, I just call it ```State``` model.
   * Our professor points out that this chapter is very similiar with what we are doing. I haven't finished the reading, but there is bad news and good news based on the first impression. 
   * The bad news is that it is very very similiar with our model, this made me feel a little bit sad. But there should be someone in the world have already found this delicate model, right? And there also has some good news, :) Let's talk about the bad news first. This chapter models the "applications that involve the threading of a state through a function". Let's take a look at his state type, ```type State s a b :: (s, a) -> (s, b)```. It updates the storage and gives output base on the storage and input. Frankly, it has the same basic idea with us.
   * There are two good news. First, it only update the storage, so it cannot switch the transition function dynamically. Second, because this chapter is too old, maybe they didn't have the GADTs extension at that moment(2003?). So they didn't hide the storage type, and it means that it requires that all the functions in the same system have the same stroage type, ```instance Arrow (State s)```. Comparing to our model, the different state machines may have different storage types, and this sounds like a more intuitive model to me.
