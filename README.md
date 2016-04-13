@@ -142,7 +142,7 @@ Base on their own models, both ```AFRP``` and ```AFSM``` have the Event type, bu
 
 [Haskell/Arrow tutorial](https://en.wikibooks.org/wiki/Haskell/Arrow_tutorial)
   * the Arrow tutorial with ```Circuit``` model.
-  * Just realize that both AFRP and our model are very similar with ```Circuit```. Here is its definition, ```newtype Circuit a b = Circuit { unCircuit :: a -> (Circuit a b, b) }```. Actually, FRP is simulating signal systems, also it's why I prefer to use the name ```signal function``` instead of ```behavior function```. On the other hand, the transition function(TF) of AFRP is the same with the AFSM's TF with fix storage type ```DTime```, and the benefit is that it does not require the GADTs extension. However, AFRP doesn't store the DTime, because DTime comes from the input.
+  * Just realize that both AFRP and our model are very similar with ```Circuit```. Here is its definition, ```newtype Circuit a b = Circuit { unCircuit :: a -> (Circuit a b, b) }```. Actually, FRP is simulating signal systems, also it's why I prefer to use the name ```signal function``` instead of ```behavior function```. On the other hand, it looks like that the transition function(TF) of AFRP is the same with the AFSM's TF if we fix storage type with ```DTime```, and the benefit is that it does not require the GADTs extension. However, the real diffence between them is that AFRP doesn't store the DTime, because DTime just comes from the input. So the biggest diffence between our model and others, is that we have a more netural way to repesent the local variables!
 
 [Control.Monad.ST](https://hackage.haskell.org/package/base-4.8.2.0/docs/Control-Monad-ST.html)
 
