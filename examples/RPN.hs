@@ -57,8 +57,8 @@ trans0 xs op =
 --  >----->| in2post |>------->
 --         \---------/
 --
-in2post :: SM Token [Token]
-in2post = simpleSM trans0 [End]
+in2post :: SM () Token [Token]
+in2post = hideStorage $ simpleSM trans0 [End]
 
 post1 = concat $ getRet in2post test1
 post2 = concat $ getRet in2post test2
@@ -80,8 +80,8 @@ trans1 (x:y:xs) (Op o) = ((f o y x):xs, Nothing)
 --  >----->| post2ret' |>--------->
 --         \-----------/
 --
-post2ret' :: SM Token (Maybe Int)
-post2ret' = simpleSM trans1 []
+post2ret' :: SM () Token (Maybe Int)
+post2ret' = hideStorage $ simpleSM trans1 []
 
 
 --
@@ -89,8 +89,8 @@ post2ret' = simpleSM trans1 []
 --  >------->| post2ret |>----------->
 --           \----------/
 --
-post2ret :: SM [Token] [Maybe Int]
-post2ret = execSM post2ret'
+post2ret :: SM () [Token] [Maybe Int]
+post2ret = hideStorage $ execSM post2ret'
 
 
 -- an example to use Arrow notation
@@ -104,14 +104,14 @@ post2ret = execSM post2ret'
 --                     in2ret
 --
 -- in2ret = in2post >>> post2ret
-in2ret :: SM Token [Maybe Int]
-in2ret = proc x -> do
+in2ret :: SMH Token [Maybe Int]
+in2ret = hideStorage $ proc x -> do
    y <- in2post -< x
    post2ret -< y
 
 -- Parsing and evaluating
 
-getRet :: SM a b -> [a] -> [b]
+getRet :: SMH a b -> [a] -> [b]
 getRet sm xs = snd $ exec sm xs
 
 calc :: [Token] -> [Int]

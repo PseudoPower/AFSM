@@ -13,11 +13,12 @@ module Control.AFSM.SMFunctor where
 
 -- import Prelude hiding ((.))
 -- import Data.Functor.Identity
-import Control.AFSM
+import Control.AFSM.CoreType
+import Control.AFSM.Core
 
 class SMFunctor f where
-  smexec :: SM a b -> f a -> (SM a b, f b)
-  smfmap :: SM a b -> f a -> f b
+  smexec :: SM s a b -> f a -> (SM s a b, f b)
+  smfmap :: SM s a b -> f a -> f b
   smfmap sm a = snd $ smexec sm a 
 
 instance SMFunctor [] where
@@ -42,8 +43,8 @@ instance SMFunctor ((->) r) where
     where
       rb r = snd $ f s (ra r)
      
-instance SMFunctor (SM r) where
-  smexec sm ra = (sm, composeSM sm ra)
+instance SMFunctor (SM s r) where
+  smexec sm ra = (sm, absorbRSM ra sm)
   
 instance SMFunctor (Either a) where
   smexec sm (Left a) = (sm, Left a)

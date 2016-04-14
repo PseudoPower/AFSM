@@ -1,5 +1,5 @@
 name:                AFSM
-version:             0.1.2.0
+version:             0.1.3.0
 synopsis:            Arrowized functional state machines
 description: Arrowized functional state machines.
              This module is inspired by Yampa and the paper 
@@ -21,9 +21,13 @@ cabal-version:       >=1.10
 library
   exposed-modules:
     Control.AFSM
+    Control.AFSM.Core
+    Control.AFSM.CoreType
     Control.AFSM.Event
+    Control.AFSM.SMFunctor
+    Control.AFSM.SMH
   -- other-modules:       
-  other-extensions:    Arrows, GADTs
+  other-extensions:    Arrows, FlexibleInstances
   build-depends:       base >= 4.7 && < 5
   ghc-options:         -Wall
   hs-source-dirs:      src
