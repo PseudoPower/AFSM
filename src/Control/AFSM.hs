@@ -17,10 +17,12 @@
 
 module Control.AFSM (
   -- module Control.Category,
-  module Control.Arrow,
+  -- module Control.Arrow,
   
   Event(..),
-
+  
+  SMFunctor(..),
+  
   -- * The 'SM' type
   SM(..),
   SMH,
@@ -35,7 +37,7 @@ module Control.AFSM (
   -- * Basic State Machines
   constSM,
   idSM,
-  composeSM,
+  composeSM, (>>>>), (<<<<),
   foldlSM,
   foldlDelaySM,
   delaySM,
@@ -43,7 +45,7 @@ module Control.AFSM (
   -- * High order functions
   execSM,
   hideStorage,
-  -- concatSM,
+  concatSM,
 
   -- * Evaluation
   step,
@@ -51,8 +53,6 @@ module Control.AFSM (
 
 ) where
 
--- import Prelude hiding ((.))
-import Control.Category
 import Control.Arrow
 import Control.AFSM.CoreType
 import Control.AFSM.Core

@@ -13,6 +13,7 @@ module Control.AFSM.Core where
 
 import Control.Category
 import Control.Arrow
+import Control.Monad
 
 import Control.AFSM.CoreType
 
@@ -70,12 +71,6 @@ delaySM a = SM f a
 
 -- High order functions
 
--- | hide the Storage type in the transition function.
-hideStorage :: SM s a b -> SMH a b
-hideStorage (SM f s) = SM (f1 f s) ()
-  where 
-    f1 f s () a = let (SM f' s', b) = f s a in (SM (f1 f' s') (), b)
-
 -- | absorb a SM and hide its storage.
 absorbRSM :: SM s0 a b -> SM s1 b c -> SM s0 a c
 absorbRSM (SM f0 s0) (SM f1 s1) = SM (f2 f0 f1 s1) s0
@@ -119,6 +114,16 @@ composeSM (SM f1 s1) (SM f0 s0) = SM (f2 f0 f1) (s0, s1)
       where
         (SM f0' s0', b) = f0 s0 a
         (SM f1' s1', c) = f1 s1 b
+        
+infixr 1 >>>>, <<<<
+
+-- | Right-to-left composition
+(<<<<) :: SM s1 b c -> SM s0 a b -> SM (s0, s1) a c
+(<<<<) = composeSM
+
+-- | Left-to-right composition
+(>>>>) :: SM s0 a b -> SM s1 b c -> SM (s0, s1) a c
+f >>>> g = composeSM g f
 
 -- | converts SM a b -> SM [a] [b], it is very useful to compose SM a [b] and SM b c to SM a [c].
 execSM :: SM s a b -> SM s [a] [b]
@@ -128,9 +133,12 @@ execSM (SM f s) = SM (f1 f) s
       where
         (SM f' s', bs) = exec (SM f s) xs
 
- 
+
+joinSM :: Monad m => SM s a (m (m b)) -> SM s a (m b)
+joinSM sm = absorbR sm join
+        
 concatSM :: SM s a [[b]] -> SM s a [b]
-concatSM sm = absorbR sm concat
+concatSM = joinSM
 
 -- eventOutSM :: SM a b -> SM a (Event b)
 -- eventOutSM = fmap Event

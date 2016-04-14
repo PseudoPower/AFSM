@@ -19,6 +19,13 @@ import Control.Arrow
 import Control.AFSM.CoreType
 import Control.AFSM.Core
 
+-- | hide the Storage type in the transition function.
+hideStorage :: SM s a b -> SMH a b
+hideStorage (SM f s) = SM (f1 f s) ()
+  where 
+    f1 f s () a = let (SM f' s', b) = f s a in (SM (f1 f' s') (), b)
+    
+
 -- Category instance
 
 instance Category (SM ()) where
