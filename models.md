@@ -13,7 +13,7 @@ Because all of them are the abstraction about computation. So they have the same
 
 ### AFRP
 
-AFRP doesn't open the constructor to users, and this limilt it abilities. But it is able to switch the signal functions base on the input by using switchers.
+AFRP doesn't open the constructor to users, and this limilts its abilities. But it is able to switch the signal functions base on the input by using switchers.
 
 ### State
 
@@ -32,7 +32,7 @@ ST Monad is a simpler version of State. ST is the same with `State s () b`. But 
 
 1. If we can switch the transition function dynamically, TF a b = (a -> (TF a b, b)). It gives us a chance to hide the local variables into the transition function.
 
-2. Also, if it is an instance of ArrowLoop, using `delay` and `loop` can have local variables. This also requires the dynamically switching feature, and it is more complex than the first one, but the benefit is that it is able to keep the information of the storage.
+2. Also, if it is an instance of ArrowLoop, we can use `delay` and `loop` to have local variables. This also requires the dynamically switching feature, and it is more complex than the first one, but the benefit is that it is able to keep the information of the storage.
 
 3. Otherwise, for example, `ST s ([Int]->[Int])`, we should Build `TF a b = (a -> (TF a b, b))` by ourselves in the output function `[Int] -> [Int]`.
 
@@ -87,3 +87,4 @@ Base on their own models, both `AFRP` and `AFSM` have the Event type.
   * So it the same with our model, this made me feel a little bit sad. But there should be someone in the world have already found this delicate model, right?
   * Another thing is that we will introduce the `Event` type into our system, which the `Circuit` doesn't have. And evnet makes building `slowdownSM :: SM [a] (Event a)` become a possible thing.
   * In the end, I am still a litte frustrated. There is one thing should be clear(probably it is a little pessimistic). `Circuit`, `AFRP`, `AFSM` and the model in this chapter are all Turing complete and having instances of the Arrow type class. Once they have the instance of ArrowLoop or changing the transition function dynmically, it has the ability to be stateful. And once they have the instance of ArrowChoice, they have the ability to perform different computations for different inputs. It is kind of saying "the assembly language can do anything, and why we need a new language". Without considering the ability, whether the design is convenient (and efficient) for users is the most important things for me to keep in mind. These words sound like an old man's words! :D
+
