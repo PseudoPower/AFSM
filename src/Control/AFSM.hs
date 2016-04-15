@@ -38,6 +38,7 @@ module Control.AFSM (
   -- * Basic State Machines
   constSM,
   idSM,
+  arrSM,
   composeSM, (>>>>), (<<<<),
   foldlSM,
   foldlDelaySM,
