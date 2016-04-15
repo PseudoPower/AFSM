@@ -13,7 +13,7 @@ Because all of them are the abstraction about computation. So they have the same
 
 ### AFRP
 
-AFRP doesn't open the constructor to users, and this limilt it abilities. But it is able to switch the signal functions base on the input by using switchers.
+AFRP doesn't open the constructor to users, and this limilts its abilities. But it is able to switch the signal functions base on the input by using switchers.
 
 ### State
 
@@ -32,7 +32,7 @@ ST Monad is a simpler version of State. ST is the same with ```State s () b```. 
 
 1. If we can switch the transition function dynamically, TF a b = (a -> (TF a b, b)). It gives us a chance to hide the local variables into the transition function.
 
-2. Also, if it is an instance of ArrowLoop, using ```delay``` and ```loop``` can have local variables. This also requires the dynamically switching feature, and it is more complex than the first one, but the benefit is that it is able to keep the information of the storage.
+2. Also, if it is an instance of ArrowLoop, we can use ```delay``` and ```loop``` to have local variables. This also requires the dynamically switching feature, and it is more complex than the first one, but the benefit is that it is able to keep the information of the storage.
 
 3. Otherwise, for example, ```ST s ([Int]->[Int])```, we should Build ```TF a b = (a -> (TF a b, b))``` by ourselves in the output function ```[Int] -> [Int]```.
 
