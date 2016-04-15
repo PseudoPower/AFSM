@@ -21,15 +21,16 @@ module Control.AFSM (
   
   Event(..),
   
-  SMFunctor(..),
+  -- SMFunctor(..),
   
   -- * The 'SM' type
   SM(..),
   SMH,
 
   -- * The 'SMState' type
-  SMState,
-
+  --SMState,
+  TF(..),
+  
   -- * Constructors
   newSM,
   simpleSM,
@@ -44,7 +45,7 @@ module Control.AFSM (
 
   -- * High order functions
   execSM,
-  hideStorage,
+  -- hideStorage,
   concatSM,
 
   -- * Evaluation
@@ -56,5 +57,6 @@ module Control.AFSM (
 import Control.Arrow
 import Control.AFSM.CoreType
 import Control.AFSM.Core
+import Control.AFSM.TF
 import Control.AFSM.SMFunctor
 import Control.AFSM.SMH

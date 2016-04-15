@@ -21,12 +21,21 @@ module Control.AFSM.CoreType where
 --   That's why it looks like this:
 --     (storage -> a -> (SM newState newStorage, b))
 --     type SMState storage input output = (storage -> input -> (SM storage input output, output))
-type SMState s a b = (s -> a -> (SM s a b, b))
+-- type SMState s a b = (s -> a -> (SM s a b, b))
+
+newtype TF s a b = TF (s -> a -> (SM s a b, b))
+
 
 -- | 'SM' is a type representing a state machine.
 --     (SMState s a b): initial state(transition function), s: initial storage
 --     SM storage input output = SM (SMState storage input output) storage
-data SM s a b = SM { tf :: (SMState s a b), st :: s }
+data SM s a b = SM (TF s a b) s
+
+tf :: SM s a b -> (s -> a -> (SM s a b, b))
+tf (SM (TF f) _) = f
+
+st :: SM s a b -> s
+st (SM _ s) = s
 
 instance (Show s) => Show (SM s a b) where
   show (SM f s) = show s
@@ -38,3 +47,6 @@ type SMH a b = SM () a b
 
 -- | 'Event' type, there are 4 different events: event a, no event, error event string and exit event.
 data Event a = Event a | NoEvent | ErrEvent String | ExitEvent deriving (Show, Eq, Ord)
+
+
+-- (SM (TF f0) s0) (SM (TF f1) s1)

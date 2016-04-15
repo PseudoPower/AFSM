@@ -23,7 +23,7 @@ class SMFunctor f where
 
 instance SMFunctor [] where
   smexec sm [] = (sm, [])
-  smexec (SM f s) (x:xs) = (sm'', b:bs)
+  smexec (SM (TF f) s) (x:xs) = (sm'', b:bs)
     where
       (sm', b) = f s x
       (sm'', bs) = (smexec sm' xs)
@@ -31,7 +31,7 @@ instance SMFunctor [] where
   
 instance SMFunctor Maybe where
   smexec sm Nothing = (sm, Nothing)
-  smexec (SM f s) (Just a) = (sm', Just b)
+  smexec (SM (TF f) s) (Just a) = (sm', Just b)
     where (sm', b) = f s a
     
 -- instance SMFunctor Identity where
@@ -39,7 +39,7 @@ instance SMFunctor Maybe where
 --     where (sm', b) = step sm (runIdentity a)
 
 instance SMFunctor ((->) r) where
-  smexec sm@(SM f s) ra = (sm, rb)
+  smexec sm@(SM (TF f) s) ra = (sm, rb)
     where
       rb r = snd $ f s (ra r)
      
@@ -48,9 +48,9 @@ instance SMFunctor (SM s r) where
   
 instance SMFunctor (Either a) where
   smexec sm (Left a) = (sm, Left a)
-  smexec (SM f s) (Right b) = (sm', Right c)
+  smexec (SM (TF f) s) (Right b) = (sm', Right c)
     where (sm', c) = f s b
     
 instance SMFunctor ((,) a) where
-  smexec (SM f s) (a, b) = (sm', (a, c))
+  smexec (SM (TF f) s) (a, b) = (sm', (a, c))
     where (sm', c) = f s b

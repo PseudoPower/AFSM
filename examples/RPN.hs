@@ -1,4 +1,4 @@
-{-# LANGUAGE Arrows #-}
+-- {-# LANGUAGE Arrows #-}
 
 -----------------------------------------------------------------------------
 -- A simple calculator
@@ -104,7 +104,7 @@ post2ret = execSM post2ret'
 --         \----------------------------/
 --                     in2ret
 --
-in2ret SM ([Token], [Int]) Token [Maybe Int]
+in2ret :: SM ([Token], [Int]) Token [Maybe Int]
 in2ret = in2post >>>> post2ret
 {-
 hg = hideStorage

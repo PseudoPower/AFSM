@@ -19,13 +19,16 @@ import Control.Arrow
 import Control.AFSM.CoreType
 import Control.AFSM.Core
 
+newSMH :: (() -> a -> (SMH a b, b)) -> SMH a b
+newSMH f = newSM f ()
+
 -- | hide the Storage type in the transition function.
 hideStorage :: SM s a b -> SMH a b
-hideStorage (SM f s) = SM (f1 f s) ()
+hideStorage (SM (TF f) s) = newSMH (f1 f s)
   where 
-    f1 f s () a = let (SM f' s', b) = f s a in (SM (f1 f' s') (), b)
-    
+    f1 f s () a = let (sm', b) = f s a in (newSMH $ f1 (tf sm') (st sm'), b)
 
+    
 -- Category instance
 
 instance Category (SM ()) where
@@ -33,16 +36,17 @@ instance Category (SM ()) where
   (.) = composeSMH
 
 idSMH :: SMH a a
-idSMH = SM (\_ a -> (idSMH, a)) ()
+idSMH = newSMH (\_ a -> (idSMH, a))
 
 composeSMH :: SMH b c -> SMH a b -> SMH a c
-composeSMH sm1 sm0 = hideStorage $ SM f2 (sm0,sm1)
+composeSMH sm1 sm0 = newSMH $ f2 (tf sm0) (tf sm1)
   where
-    f2 ((SM f0 s0),(SM f1 s1)) a = (SM f2 (sm0', sm1'), c)
+    f2 f0 f1 _ a = (newSMH $ f2 (tf sm0') (tf sm1'), c)
       where
-        (sm0', b) = f0 s0 a
-        (sm1', c) = f1 s1 b
+        (sm0', b) = f0 () a
+        (sm1', c) = f1 () b
 
+        
 -- Arrow instance
 
 instance Arrow (SM ()) where
@@ -54,38 +58,38 @@ instance Arrow (SM ()) where
 
 arrSMH :: (a -> b) -> SMH a b
 arrSMH f =
-  SM (\_ a ->(arrSMH f, f a)) ()
+  newSMH (\_ a ->(arrSMH f, f a))
 
 firstSMH :: SMH a b -> SMH (a, c) (b, c)
-firstSMH sm = hideStorage $ SM f1 sm
+firstSMH sm = newSMH $ f1 (tf sm)
   where
-    f1 (SM f s) (a,c) = ((SM f1 sm'), (b, c))
+    f1 f _ (a,c) = (newSMH $ f1 (tf sm'), (b, c))
       where
-        (sm', b) = f s a
+        (sm', b) = f () a
 
 
 secondSMH :: SMH a b -> SMH (c, a) (c, b)
-secondSMH sm = hideStorage $ SM f1 sm
+secondSMH sm = newSMH $ f1 (tf sm)
   where
-    f1 (SM f s) (c,a) = ((SM f1 sm'), (c, b))
+    f1 f _ (c,a) = (newSMH $ f1 (tf sm'), (c, b))
       where
-        (sm', b) = f s a
+        (sm', b) = f () a
 
 productSMH :: SMH a b -> SMH c d -> SMH (a, c) (b, d)
-productSMH sm0 sm1 = hideStorage $ SM f2 (sm0, sm1)
+productSMH sm0 sm1 = newSMH $ f2 (tf sm0) (tf sm1)
   where
-    f2 ((SM f0 s0),(SM f1 s1)) (a, c) = (SM f2 (sm0', sm1'), (b, d))
+    f2 f0 f1 _ (a, c) = (newSMH $ f2 (tf sm0') (tf sm1'), (b, d))
       where
-        (sm0', b) = f0 s0 a
-        (sm1', d) = f1 s1 c
+        (sm0', b) = f0 () a
+        (sm1', d) = f1 () c
 
 fanoutSMH :: SMH a b -> SMH a c -> SMH a (b, c)
-fanoutSMH sm0 sm1 = hideStorage $ SM f2 (sm0, sm1)
+fanoutSMH sm0 sm1 = newSMH $ f2 (tf sm0) (tf sm1)
   where
-    f2 ((SM f0 s0),(SM f1 s1)) a = (SM f2 (sm0', sm1'), (b, c))
+    f2 f0 f1 _ a = (newSMH $ f2 (tf sm0') (tf sm1'), (b, c))
       where
-        (sm0', b) = f0 s0 a
-        (sm1', c) = f1 s1 a
+        (sm0', b) = f0 () a
+        (sm1', c) = f1 () a
 
 
 
@@ -98,32 +102,33 @@ instance ArrowChoice (SM ()) where
   (|||) = faninSMH
 
 leftSMH :: SMH a b -> SMH (Either a c) (Either b c)
-leftSMH sm = hideStorage $ SM f1 sm
+leftSMH sm0 = newSMH $ f1 (tf sm0)
   where
-    f1 sm' (Right c) = (SM f1 sm', Right c)
-    f1 (SM f0 s0) (Left a) = (SM f1 sm'', Left b)
+    f1 f0 _ (Right c) = (newSMH $ f1 f0, Right c)
+    f1 f0 _ (Left a) = (newSMH $ f1 (tf sm0'), Left b)
       where
-        (sm'', b) = f0 s0 a
+        (sm0', b) = f0 () a
 
 rightSMH :: SMH a b -> SMH (Either c a) (Either c b)
-rightSMH sm = hideStorage $ SM f1 sm
+rightSMH sm0 = newSMH $ f1 (tf sm0)
   where
-    f1 sm' (Left c) = (SM f1 sm', Left c)
-    f1 (SM f s) (Right a) = ((SM f1 sm''), Right b)
+    f1 f0 _ (Left c) = (newSMH $ f1 f0, Left c)
+    f1 f0 _ (Right a) = (newSMH $ f1 (tf sm0'), Right b)
       where
-        (sm'', b) = f s a
+        (sm0', b) = f0 () a
 
 sumSMH :: SMH a b -> SMH c d -> SMH (Either a c) (Either b d)
-sumSMH sm0 sm1 = hideStorage $ SM f2 (sm0, sm1)
+sumSMH sm0 sm1 = newSMH (f2 (tf sm0) (tf sm1))
   where
-    f2 (SM f0 s0, sm1') (Left a)  = let (sm0', b) = f0 s0 a in (SM f2 (sm0', sm1'), Left b)
-    f2 (sm0', SM f1 s1) (Right c) = let (sm1', d) = f1 s1 c in (SM f2 (sm0', sm1'), Right d)
+    f2 f0 f1 _ (Left a)  = let (sm0', b) = f0 () a in (newSMH (f2 (tf sm0') f1), Left b)
+    f2 f0 f1 _ (Right c) = let (sm1', d) = f1 () c in (newSMH (f2 f0 (tf sm1')), Right d)
 
 faninSMH :: SMH a c -> SMH b c -> SMH (Either a b) c
-faninSMH sm0 sm1 = hideStorage $ SM f2 (sm0, sm1)
+faninSMH sm0 sm1 = newSMH (f2 (tf sm0) (tf sm1))
   where
-    f2 (SM f0 s0, sm1') (Left a)  = let (sm0', c) = f0 s0 a in (SM f2 (sm0', sm1'), c)
-    f2 (sm0', SM f1 s1) (Right b) = let (sm1', c) = f1 s1 b in (SM f2 (sm0', sm1'), c)
+    f2 f0 f1 _ (Left a)  = let (sm0', c) = f0 () a in (newSMH (f2 (tf sm0') f1), c)
+    f2 f0 f1 _ (Right b) = let (sm1', c) = f1 () b in (newSMH (f2 f0 (tf sm1')), c)
+
 
 -- ArrowApply
 
@@ -131,9 +136,9 @@ instance ArrowApply (SM ()) where
   app = appSM
 
 appSM :: SMH (SMH a b, a) b
-appSM = SM f1 ()
+appSM = newSMH f
   where
-    f1 () ((SM f s), a) = (SM f1 (), snd $ f s a)
+    f _ (sm, a) = (newSMH f, snd $ (tf sm) () a)
 
 
 -- ArrowLoop
@@ -144,11 +149,11 @@ instance ArrowLoop (SM ()) where
 
 -- SM has build-in loop structure, but the ArrowLoop instance helps us sharing storage between SMs, and adding one more instance is harmless, :)
 loopSMH :: SMH (a, c) (b, c) -> SMH a b
-loopSMH sm = hideStorage $ SM f1 sm
+loopSMH sm = newSMH $ f1 (tf sm)
   where
-    f1 (SM f s) a = (SM f1 sm', b)
+    f1 f0 _ a = (newSMH $ f1 (tf sm'), b)
       where
-        (sm', (b, c)) = f s (a, c)
+        (sm', (b, c)) = f0 () (a, c)
 
 
 -- Functor
@@ -158,9 +163,8 @@ instance Functor (SM () a) where
 
 -- fmapSM f sm = sm >>> arr f
 fmapSMH :: (b -> c) -> SMH a b -> SMH a c
-fmapSMH f sm = hideStorage $ SM f1 sm
+fmapSMH f sm = newSMH $ f1 (tf sm)
   where
-    f1 (SM f0 s0) a = (SM f1 sm', f b)
+    f1 f0 () a = (newSMH $ f1 (tf sm'), f b)
       where
-        (sm', b) = f0 s0 a
-
+        (sm', b) = f0 () a
