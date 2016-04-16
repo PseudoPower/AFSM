@@ -154,17 +154,3 @@ loopSMH sm = newSMH $ f1 (tf sm)
     f1 f0 _ a = (newSMH $ f1 (tf sm'), b)
       where
         (sm', (b, c)) = f0 () (a, c)
-
-
--- Functor
-
-instance Functor (SM () a) where
-  fmap = fmapSMH
-
--- fmapSM f sm = sm >>> arr f
-fmapSMH :: (b -> c) -> SMH a b -> SMH a c
-fmapSMH f sm = newSMH $ f1 (tf sm)
-  where
-    f1 f0 () a = (newSMH $ f1 (tf sm'), f b)
-      where
-        (sm', b) = f0 () a

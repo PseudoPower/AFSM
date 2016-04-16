@@ -100,7 +100,8 @@ absorbL f0 (SM (TF f1) s) = newSM (f2 f1) s
       where
         (SM (TF f1') s', c) = f1 s (f0 a)
 
--- instance Category where
+
+-- Category instance
 
 -- idSM
        
@@ -113,7 +114,6 @@ composeSM (SM (TF f1) s1) (SM (TF f0) s0) = newSM (f2 f0 f1) (s0, s1)
         (SM (TF f0') s0', b) = f0 s0 a
         (SM (TF f1') s1', c) = f1 s1 b
         
-
 -- | Right-to-left composition
 (<<<<) :: SM s1 b c -> SM s0 a b -> SM (s0, s1) a c
 (<<<<) = composeSM
@@ -123,7 +123,7 @@ composeSM (SM (TF f1) s1) (SM (TF f0) s0) = newSM (f2 f0 f1) (s0, s1)
 f >>>> g = composeSM g f
 
 
--- instance Arrow where
+-- Arrow instance
 
 -- arrSM
 
@@ -168,6 +168,15 @@ fanoutSM sm0 sm1 = newSM (f2 (tf sm0) (tf sm1)) (st sm0, st sm1)
 (&&&&) :: SM s0 a b -> SM s1 a c -> SM (s0, s1) a (b, c)
 (&&&&) sm0 sm1 = merge (\a -> (a, a)) (\b0 b1 -> (b0, b1)) sm0 sm1
 -}
+
+-- ArrowChoice instance
+
+-- ArrowApply
+
+-- ArrowLoop
+
+
+
 
 
 -- | converts SM a b -> SM [a] [b], it is very useful to compose SM a [b] and SM b c to SM a [c].
@@ -214,3 +223,11 @@ exec (SM (TF f) s) (x:xs) = (sm'', b:bs)
     (sm', b) = f s x
     (sm'', bs) = (exec sm' xs)
     
+-- Functor
+
+instance Functor (SM s a) where
+  fmap = fmapSM
+
+-- fmapSM f sm = sm >>> arr f
+fmapSM :: (b -> c) -> SM s a b -> SM s a c
+fmapSM f sm = absorbR sm f

@@ -1,3 +1,5 @@
+-- {-# LANGUAGE InstanceSigs #-}
+
 -----------------------------------------------------------------------------
 -- |
 -- Module      :  Control.AFSM.SMFunctor
@@ -12,14 +14,26 @@
 module Control.AFSM.SMFunctor where
 
 -- import Prelude hiding ((.))
--- import Data.Functor.Identity
+-- import Data.Functor.
+import Control.Monad.Trans.Maybe
+import Data.Functor.Compose
+
 import Control.AFSM.CoreType
+import Control.AFSM.Util
 import Control.AFSM.Core
 
 class SMFunctor f where
   smexec :: SM s a b -> f a -> (SM s a b, f b)
   smfmap :: SM s a b -> f a -> f b
   smfmap sm a = snd $ smexec sm a 
+
+smexecSM :: SMFunctor f => SM s a b -> SM s (f a) (f b)
+smexecSM sm = newSM (f sm) (st sm)
+  where
+    f sm _ fa = (newSM (f sm') (st sm'), fb)
+      where 
+      (sm', fb) = smexec sm fa
+ 
 
 instance SMFunctor [] where
   smexec sm [] = (sm, [])
@@ -28,12 +42,29 @@ instance SMFunctor [] where
       (sm', b) = f s x
       (sm'', bs) = (smexec sm' xs)
 
-  
+
 instance SMFunctor Maybe where
   smexec sm Nothing = (sm, Nothing)
   smexec (SM (TF f) s) (Just a) = (sm', Just b)
     where (sm', b) = f s a
+
+
     
+smexecSMSM :: SMFunctor f => SM s a b -> SM (SM s a b) (f a) (f b)
+smexecSMSM sm = newSM f sm
+  where
+    f sm fa = (newSM f sm', fb)
+      where 
+      (sm', fb) = smexec sm fa  
+
+-- newtype Compose f g a = Compose { getCompose :: f (g a) }
+
+instance (SMFunctor f, SMFunctor g) => SMFunctor (Compose f g) where
+  smexec sm fga = (st sm2, Compose fgb)
+    where
+      sm1 = smexecSMSM sm
+      (sm2, fgb) = smexec sm1 $ getCompose fga
+
 -- instance SMFunctor Identity where
 --   smexec sm a = (sm', Identity b)
 --     where (sm', b) = step sm (runIdentity a)

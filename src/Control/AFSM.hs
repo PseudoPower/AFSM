@@ -21,7 +21,7 @@ module Control.AFSM (
   
   Event(..),
   
-  -- SMFunctor(..),
+  SMFunctor(..),
   
   -- * The 'SM' type
   SM(..),
