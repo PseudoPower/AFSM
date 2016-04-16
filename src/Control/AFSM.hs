@@ -37,15 +37,26 @@ module Control.AFSM (
   -- * Basic State Machines
   constSM,
   idSM,
-  arrSM,
-  composeSM, (>>>>), (<<<<),
-  foldlSM,
-  foldlDelaySM,
+  
   delaySM,
   
+  arrSM,
+  
+  foldlSM,
+  foldlDelaySM,
+  
+  
   -- * High order functions
+  composeSM, (>>>>), (<<<<),
+  
+  firstSM, secondSM, (****), (&&&&),
+  
+
+  absorb,
+  merge,
+
+  
   execSM,
-  -- hideStorage,
   concatSM,
 
   -- * Evaluation

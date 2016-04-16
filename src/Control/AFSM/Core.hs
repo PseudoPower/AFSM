@@ -33,6 +33,13 @@ constSM :: b -> SM () a b
 constSM b = newSM f ()
   where
     f _ _ = ((constSM b), b)
+
+-- | delay the input with given value.
+-- delaySM = foldlDelaySM (const id)
+delaySM :: a -> SM a a a
+delaySM a = newSM f a
+  where
+    f s' a' = ((newSM f a'), s')
     
 -- | build a SM from a function
 arrSM :: (a -> b) -> SM () a b
@@ -49,13 +56,6 @@ foldlDelaySM :: (s -> a -> s) -> s -> SM s a s
 foldlDelaySM f s = newSM f' s
   where
     f' s' a' = let s'' = f s' a' in (newSM f' s'', s')
-
--- | delay the input with given value.
--- delaySM = foldlDelaySM (const id)
-delaySM :: a -> SM a a a
-delaySM a = newSM f a
-  where
-    f s' a' = ((newSM f a'), s')
 
 -- holdSM :: a -> SM (Event a) a
 -- holdSM = undefined
@@ -141,13 +141,6 @@ secondSM sm = newSM (f1 $ tf sm) (st sm)
       where
         (sm', b) = f s a
 
-(****) :: SM s0 a b -> SM s1 c d -> SM (s0, s1) (a, c) (b, d)
-(****) sm0 sm1 = merge (\(a, c) -> (a, c)) (\b d -> (b, d)) sm0 sm1
-
-(&&&&) :: SM s0 a b -> SM s1 a c -> SM (s0, s1) a (b, c)
-(&&&&) sm0 sm1 = merge (\a -> (a, a)) (\b0 b1 -> (b0, b1)) sm0 sm1
-
-{-
 productSM :: SM s0 a b -> SM s1 c d -> SM (s0, s1) (a, c) (b, d)
 productSM sm0 sm1 = newSM (f2 (tf sm0) (tf sm1)) (st sm0, st sm1)        
   where
@@ -165,9 +158,16 @@ fanoutSM sm0 sm1 = newSM (f2 (tf sm0) (tf sm1)) (st sm0, st sm1)
         (sm1', c) = f1 s1 a
 
 (****) = productSM
-(&&&&) = fanoutSM
--}
 
+(&&&&) = fanoutSM
+
+{-
+(****) :: SM s0 a b -> SM s1 c d -> SM (s0, s1) (a, c) (b, d)
+(****) sm0 sm1 = merge (\(a, c) -> (a, c)) (\b d -> (b, d)) sm0 sm1
+
+(&&&&) :: SM s0 a b -> SM s1 a c -> SM (s0, s1) a (b, c)
+(&&&&) sm0 sm1 = merge (\a -> (a, a)) (\b0 b1 -> (b0, b1)) sm0 sm1
+-}
 
 
 -- | converts SM a b -> SM [a] [b], it is very useful to compose SM a [b] and SM b c to SM a [c].
