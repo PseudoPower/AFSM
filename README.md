@@ -1,6 +1,6 @@
 # Arrowized functional state machines
 
-Because this readme file becomes so long, I moved other models to [models.md](https://github.com/PseudoPower/AFSM/blob/master/models.md), and I am able to detail each of them without worrying about the length of the article, :)
+Because this readme file becomes so long, I moved other models to [models.md](doc/models.md), and I am able to detail each of them without worrying about the length of the article, :)
 
 ## Update notes
 
