@@ -27,8 +27,7 @@ module Control.AFSM (
   SM(..),
   SMH,
 
-  -- * The 'SMState' type
-  --SMState,
+  -- * The 'TF' type
   TF(..),
   
   -- * Constructors
@@ -43,7 +42,7 @@ module Control.AFSM (
   foldlSM,
   foldlDelaySM,
   delaySM,
-
+  
   -- * High order functions
   execSM,
   -- hideStorage,
@@ -57,6 +56,7 @@ module Control.AFSM (
 
 import Control.Arrow
 import Control.AFSM.CoreType
+import Control.AFSM.Util
 import Control.AFSM.Core
 import Control.AFSM.TF
 import Control.AFSM.SMFunctor

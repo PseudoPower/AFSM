@@ -16,18 +16,11 @@ import Control.Arrow
 import Control.Monad
 
 import Control.AFSM.CoreType
+import Control.AFSM.Util
 
--- Constructors
-
--- | It is the same with the SM constructor.
-newSM :: (s -> a -> (SM s a b, b)) -> s -> SM s a b
-newSM tf s = SM (TF tf) s
-
--- | build a simple SM which have only one SMState.
-simpleSM :: (s -> a -> (s, b)) -> s -> SM s a b
-simpleSM f s = newSM f' s
-  where
-    f' s' a' = let (s'', b) = f s' a' in (newSM f' s'', b)
+infixr 3 ****
+infixr 3 &&&&
+infixr 1 >>>>, <<<<
 
 -- Basic State Machines
 
@@ -44,6 +37,7 @@ constSM b = newSM f ()
 -- | build a SM from a function
 arrSM :: (a -> b) -> SM () a b
 arrSM f = newSM (\_ a ->(arrSM f, f a)) ()
+
 -- | the same with foldl
 foldlSM :: (s -> a -> s) -> s -> SM s a s
 foldlSM f s = newSM f' s
@@ -106,7 +100,10 @@ absorbL f0 (SM (TF f1) s) = newSM (f2 f1) s
       where
         (SM (TF f1') s', c) = f1 s (f0 a)
 
+-- instance Category where
 
+-- idSM
+       
 -- | compose two SM and merge their storage.
 composeSM :: SM s1 b c -> SM s0 a b -> SM (s0, s1) a c
 composeSM (SM (TF f1) s1) (SM (TF f0) s0) = newSM (f2 f0 f1) (s0, s1)
@@ -116,7 +113,6 @@ composeSM (SM (TF f1) s1) (SM (TF f0) s0) = newSM (f2 f0 f1) (s0, s1)
         (SM (TF f0') s0', b) = f0 s0 a
         (SM (TF f1') s1', c) = f1 s1 b
         
-infixr 1 >>>>, <<<<
 
 -- | Right-to-left composition
 (<<<<) :: SM s1 b c -> SM s0 a b -> SM (s0, s1) a c
@@ -125,6 +121,54 @@ infixr 1 >>>>, <<<<
 -- | Left-to-right composition
 (>>>>) :: SM s0 a b -> SM s1 b c -> SM (s0, s1) a c
 f >>>> g = composeSM g f
+
+
+-- instance Arrow where
+
+-- arrSM
+
+firstSM :: SM s a b -> SM s (a, c) (b, c)
+firstSM sm = newSM (f1 $ tf sm) (st sm)
+  where
+    f1 f s (a, c) = (newSM (f1 $ tf sm') (st sm'), (b, c))
+      where
+        (sm', b) = f s a
+        
+secondSM :: SM s a b -> SM s (c, a) (c, b)
+secondSM sm = newSM (f1 $ tf sm) (st sm)
+  where
+    f1 f s (c, a) = (newSM (f1 $ tf sm') (st sm'), (c, b))
+      where
+        (sm', b) = f s a
+
+(****) :: SM s0 a b -> SM s1 c d -> SM (s0, s1) (a, c) (b, d)
+(****) sm0 sm1 = merge (\(a, c) -> (a, c)) (\b d -> (b, d)) sm0 sm1
+
+(&&&&) :: SM s0 a b -> SM s1 a c -> SM (s0, s1) a (b, c)
+(&&&&) sm0 sm1 = merge (\a -> (a, a)) (\b0 b1 -> (b0, b1)) sm0 sm1
+
+{-
+productSM :: SM s0 a b -> SM s1 c d -> SM (s0, s1) (a, c) (b, d)
+productSM sm0 sm1 = newSM (f2 (tf sm0) (tf sm1)) (st sm0, st sm1)        
+  where
+    f2 f0 f1 (s0, s1) (a, c) = (newSM (f2 (tf sm0') (tf sm1')) (st sm0', st sm1'), (b, d))
+      where
+        (sm0', b) = f0 s0 a
+        (sm1', d) = f1 s1 c
+
+fanoutSM :: SM s0 a b -> SM s1 a c -> SM (s0, s1) a (b, c)
+fanoutSM sm0 sm1 = newSM (f2 (tf sm0) (tf sm1)) (st sm0, st sm1)
+  where
+    f2 f0 f1 (s0, s1) a = (newSM (f2 (tf sm0') (tf sm1')) (st sm0', st sm1'), (b, c))
+      where
+        (sm0', b) = f0 s0 a
+        (sm1', c) = f1 s1 a
+
+(****) = productSM
+(&&&&) = fanoutSM
+-}
+
+
 
 -- | converts SM a b -> SM [a] [b], it is very useful to compose SM a [b] and SM b c to SM a [c].
 execSM :: SM s a b -> SM s [a] [b]
@@ -149,6 +193,11 @@ concatSM = joinSM
 
 -- slowdownSM :: SM a [b] -> SM a (Event b)
 -- slowdownSM = undefined
+
+
+
+
+
 
 -- Evaluation
 
