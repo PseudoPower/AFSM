@@ -24,6 +24,16 @@ infixr 1 >>>>, <<<<
 
 -- Basic State Machines
 
+-- | build a source, for example:
+--   sourceSM $ foldlDelaySM (const (+1)) 0
+--     [0..]
+--   sourceSM $ foldlDelaySM (+) 1
+--     [1, 2, 4, 8, ...]
+sourceSM :: SM s a a -> [a]
+sourceSM sm = a:(sourceSM sm')
+  where
+    (sm', a) = step sm a
+
 -- | build a SM which just output its input
 idSM :: SM () a a
 idSM = newSM (\_ a -> (idSM, a)) ()

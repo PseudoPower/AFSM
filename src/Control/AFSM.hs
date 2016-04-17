@@ -35,6 +35,8 @@ module Control.AFSM (
   simpleSM,
 
   -- * Basic State Machines
+  sourceSM,
+  
   constSM,
   idSM,
   
@@ -46,7 +48,7 @@ module Control.AFSM (
   foldlDelaySM,
   
   
-  -- * High order functions
+  -- * Basic SM functions
   composeSM, (>>>>), (<<<<),
   
   firstSM, secondSM, (****), (&&&&),
