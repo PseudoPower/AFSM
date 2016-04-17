@@ -47,7 +47,9 @@ newSM tf s = SM (TF tf) s
 simpleSM :: (s -> a -> (s, b)) -> s -> SM s a b
 simpleSM f s = newSM f' s
   where
-    f' s' a' = let (s'', b) = f s' a' in (newSM f' s'', b)
+    f' s' a' = (newSM f' s'', b)
+      where
+        (s'', b) = f s' a'
 
 instance (Show s) => Show (SM s a b) where
   show (SM f s) = show s

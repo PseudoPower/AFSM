@@ -1,5 +1,11 @@
 -- {-# LANGUAGE Arrows #-}
-
+-----------------------------------------------------------------------------
+-- Copyright   :  (c) Hanzhong Xu, Meng Meng 2016,
+-- License     :  MIT License
+--
+-- Maintainer  :  hanzh.xu@gmail.com
+-- Stability   :  experimental
+-- Portability :  portable
 -----------------------------------------------------------------------------
 -- A simple calculator
 -----------------------------------------------------------------------------

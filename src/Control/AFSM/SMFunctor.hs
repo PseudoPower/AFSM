@@ -85,12 +85,7 @@ instance (SMFunctor f, SMFunctor g) => SMFunctor (Compose f g) where
       sm' = smexecSMA sm
       (sm'', fgb) = smexec sm' $ getCompose fga
       
-
-{-
-instance (MonadTrans t, Monad m, SMFunctor m) => SMFunctor (t m) where
-  smexec sm tma = (sm', lift mb)
-    where
--}      
+  
       
 -- SMMonad
 

@@ -9,7 +9,21 @@
 -- Portability :  portable
 -----------------------------------------------------------------------------
 
-module Control.AFSM.Event where
+module Control.AFSM.Event (
+  extractEvents
+)where
+
+import Control.AFSM.CoreType 
 
 -- | 'Event' type, there are 4 different events: event a, no event, error event string and exit event.
 -- data Event a = Event a | NoEvent | ErrEvent String | ExitEvent deriving (Show, Eq, Ord)
+
+extractEvents :: [Event a] -> [a]
+extractEvents [] = []
+extractEvents (x:xs) = case x of
+  Event a -> a:ys
+  NoEvent -> ys
+  ErrEvent s -> []
+  ExitEvent -> []
+  where
+    ys = (extractEvents xs)

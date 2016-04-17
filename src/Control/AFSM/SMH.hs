@@ -11,7 +11,14 @@
 -- Portability :  portable
 -----------------------------------------------------------------------------
 
-module Control.AFSM.SMH where
+module Control.AFSM.SMH (
+  
+  newSMH,
+  simpleSMH,
+  
+  hideStorage
+  
+) where
 
 import Control.Category
 import Control.Arrow
@@ -22,9 +29,16 @@ import Control.AFSM.Core
 newSMH :: (() -> a -> (SMH a b, b)) -> SMH a b
 newSMH f = newSM f ()
 
+simpleSMH :: (s -> a -> (s, b)) -> s -> SMH a b
+simpleSMH f s = newSMH (f' s)
+  where
+    f' s' () a' = (newSMH (f' s''), b)
+      where
+        (s'', b) = f s' a' 
+
 -- | hide the Storage type in the transition function.
 hideStorage :: SM s a b -> SMH a b
-hideStorage (SM (TF f) s) = newSMH (f1 f s)
+hideStorage sm = newSMH (f1 (tf sm) (st sm))
   where 
     f1 f s () a = let (sm', b) = f s a in (newSMH $ f1 (tf sm') (st sm'), b)
 

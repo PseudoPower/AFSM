@@ -25,7 +25,7 @@ module Control.AFSM (
   
   -- * The 'SM' type
   SM(..),
-  SMH,
+  SMH(..),
 
   -- * The 'TF' type
   TF(..),
@@ -33,6 +33,8 @@ module Control.AFSM (
   -- * Constructors
   newSM,
   simpleSM,
+  
+  tf, st,
 
   -- * Basic State Machines
   sourceSM,
@@ -71,6 +73,7 @@ import Control.Arrow
 import Control.AFSM.CoreType
 import Control.AFSM.Util
 import Control.AFSM.Core
+import Control.AFSM.Event
 import Control.AFSM.TF
 import Control.AFSM.SMFunctor
 import Control.AFSM.SMH
