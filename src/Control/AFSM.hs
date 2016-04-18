@@ -25,7 +25,6 @@ module Control.AFSM (
   
   -- * The 'SM' type
   SM(..),
-  SMH(..),
 
   -- * The 'TF' type
   TF(..),
@@ -33,7 +32,7 @@ module Control.AFSM (
   -- * Constructors
   newSM,
   simpleSM,
-  simplChcSM,
+  -- simplChcSM,
   
   tf, st,
 
@@ -66,7 +65,15 @@ module Control.AFSM (
 
   -- * Evaluation
   step,
-  exec
+  exec,
+  
+  -- * The 'SMH' type - SM with hidden storage
+  SMH(..),
+
+  newSMH,
+  simpleSMH,
+  
+  hideStorage
 
 ) where
 
@@ -78,3 +85,5 @@ import Control.AFSM.Event
 import Control.AFSM.TF
 import Control.AFSM.SMFunctor
 import Control.AFSM.SMH
+import Control.AFSM.SMMonoid
+import Control.AFSM.Pretty

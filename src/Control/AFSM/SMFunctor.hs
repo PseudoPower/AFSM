@@ -1,5 +1,3 @@
--- {-# LANGUAGE InstanceSigs #-}
-
 -----------------------------------------------------------------------------
 -- |
 -- Module      :  Control.AFSM.SMFunctor
@@ -10,6 +8,8 @@
 -- Stability   :  experimental
 -- Portability :  portable
 -----------------------------------------------------------------------------
+
+-- {-# LANGUAGE InstanceSigs #-}
 
 module Control.AFSM.SMFunctor where
 

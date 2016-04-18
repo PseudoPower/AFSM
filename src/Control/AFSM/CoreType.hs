@@ -55,6 +55,7 @@ simpleSM f s = newSM f' s
       where
         (s'', b) = f s' a'
 
+{-
 -- | build a SM which can choose STF based on the input        
 simplChcSM :: (s -> a -> STF s a b) -> s -> SM s a b
 simplChcSM cf s = simpleSM f s
@@ -62,6 +63,7 @@ simplChcSM cf s = simpleSM f s
     f s a = (s', b)
       where 
         (s', b) = (cf s a) s a
+-}
 
 instance (Show s) => Show (SM s a b) where
   show (SM f s) = show s
