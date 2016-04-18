@@ -13,6 +13,9 @@ module Control.AFSM.Event (
   extractEvents
 )where
 
+import Control.Applicative
+import Control.Monad
+
 import Control.AFSM.CoreType
 import Control.AFSM.SMFunctor
 
@@ -44,6 +47,7 @@ instance Applicative Event where
   (<*>) NoEvent _ = NoEvent
 
 instance Monad Event where
+  return = pure
   (>>=) (Event a) f = f a
   (>>=) NoEvent _ = NoEvent
   (>>=) (ErrEvent s) _ = (ErrEvent s)
