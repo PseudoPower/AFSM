@@ -18,61 +18,61 @@
 module Control.AFSM (
   -- module Control.Category,
   -- module Control.Arrow,
-  
+
   Event(..),
-  
+
   SMFunctor(..),
-  
+
   -- * The 'SM' type
   SM(..),
 
   -- * The 'TF' type
   TF(..),
-  
+
   -- * Constructors
   newSM,
   simpleSM,
   -- simplChcSM,
-  
+
   tf, st,
 
   -- * Basic State Machines
   sourceSM,
-  
+
   constSM,
   idSM,
-  
+
   delaySM,
-  
+
   arrSM,
-  
+
   foldlSM,
   foldlDelaySM,
-  
-  
+
+
   -- * Basic SM functions
   composeSM, (>>>>), (<<<<),
-  
+
   firstSM, secondSM, (****), (&&&&),
-  
+
 
   absorb,
   merge,
 
-  
+
   execSM,
   concatSM,
 
   -- * Evaluation
   step,
   exec,
-  
+
   -- * The 'SMH' type - SM with hidden storage
   SMH(..),
 
   newSMH,
   simpleSMH,
-  
+
   hideStorage
 
 ) where
@@ -85,5 +85,3 @@ import Control.AFSM.Event
 import Control.AFSM.TF
 import Control.AFSM.SMFunctor
 import Control.AFSM.SMH
-import Control.AFSM.SMMonoid
-import Control.AFSM.Pretty
