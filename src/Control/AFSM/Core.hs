@@ -137,6 +137,7 @@ f >>>> g = composeSM g f
 
 -- arrSM
 
+
 firstSM :: SM s a b -> SM s (a, c) (b, c)
 firstSM sm = newSM (f1 $ tf sm) (st sm)
   where
@@ -172,11 +173,17 @@ fanoutSM sm0 sm1 = newSM (f2 (tf sm0) (tf sm1)) (st sm0, st sm1)
 (&&&&) = fanoutSM
 
 {-
+firstSM :: SM s a b -> SM s (a, c) (b, c)
+firstSM sm = absorb (\(a, c) -> a) (\(a, c) b -> (b, c)) sm
+
+secondSM :: SM s a b -> SM s (c, a) (c, b)
+secondSM sm = absorb (\(c, a) -> a) (\(c, a) b -> (c, b)) sm 
+
 (****) :: SM s0 a b -> SM s1 c d -> SM (s0, s1) (a, c) (b, d)
-(****) sm0 sm1 = merge (\(a, c) -> (a, c)) (\b d -> (b, d)) sm0 sm1
+(****) sm0 sm1 = merge (\(a, c) -> (a, c)) (\a b d -> (b, d)) sm0 sm1
 
 (&&&&) :: SM s0 a b -> SM s1 a c -> SM (s0, s1) a (b, c)
-(&&&&) sm0 sm1 = merge (\a -> (a, a)) (\b0 b1 -> (b0, b1)) sm0 sm1
+(&&&&) sm0 sm1 = merge (\a -> (a, a)) (\a b0 b1 -> (b0, b1)) sm0 sm1
 -}
 
 -- ArrowChoice instance

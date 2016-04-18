@@ -33,6 +33,7 @@ module Control.AFSM (
   -- * Constructors
   newSM,
   simpleSM,
+  choiceSM,
   
   tf, st,
 
