@@ -54,9 +54,9 @@ simpleSM f s = newSM f' s
 choiceSM :: (a -> STF s a b) -> s -> SM s a b
 choiceSM cf s = simpleSM f s
   where
-    f s a = (s, b)
+    f s a = (s', b)
       where 
-        (s, b) = (cf a) s a
+        (s', b) = (cf a) s a
 
 instance (Show s) => Show (SM s a b) where
   show (SM f s) = show s
