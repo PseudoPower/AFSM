@@ -23,6 +23,7 @@ module Control.AFSM.CoreType where
 --     type TF storage input output = (storage -> input -> (SM storage input output, output))
 newtype TF s a b = TF (s -> a -> (SM s a b, b))
 
+-- | STF is the type of simple transition function.
 type STF s a b = (s -> a -> (s, b))
 
 -- | 'SM' is a type representing a state machine.
@@ -31,19 +32,23 @@ type STF s a b = (s -> a -> (s, b))
 data SM s a b = SM (TF s a b) s
 
 tf :: SM s a b -> (s -> a -> (SM s a b, b))
+{-# INLINE tf #-}
 tf (SM (TF f) _) = f
 
 st :: SM s a b -> s
+{-# INLINE st #-}
 st (SM _ s) = s
 
 -- Constructors
 
 -- | It is the same with the SM constructor.
 newSM :: (s -> a -> (SM s a b, b)) -> s -> SM s a b
+{-# INLINE newSM #-}
 newSM tf s = SM (TF tf) s
 
 -- | build a simple SM which have only one TF.
 simpleSM :: (STF s a b) -> s -> SM s a b
+{-# INLINE simpleSM #-}
 simpleSM f s = newSM f' s
   where
     f' s' a' = (newSM f' s'', b)
@@ -51,12 +56,12 @@ simpleSM f s = newSM f' s
         (s'', b) = f s' a'
 
 -- | build a SM which can choose STF based on the input        
-choiceSM :: (a -> STF s a b) -> s -> SM s a b
-choiceSM cf s = simpleSM f s
+simplChcSM :: (s -> a -> STF s a b) -> s -> SM s a b
+simplChcSM cf s = simpleSM f s
   where
     f s a = (s', b)
       where 
-        (s', b) = (cf a) s a
+        (s', b) = (cf s a) s a
 
 instance (Show s) => Show (SM s a b) where
   show (SM f s) = show s
