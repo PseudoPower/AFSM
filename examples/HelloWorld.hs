@@ -43,8 +43,8 @@ ptSM = plusOneSM &&&& timesTwoSM
 
 ret3 = smfmap ptSM test0
 
-mergeOutSM :: SM ((),()) (Int, Int) Int
-mergeOutSM = simpleSM (\s (a,b)->(s, a+b)) ((),())
+mergeOutSM :: SM () (Int, Int) Int
+mergeOutSM = simpleSM (\s (a,b)->(s, a+b)) ()
 
 -- example 3
 data StackOP = Push Int
