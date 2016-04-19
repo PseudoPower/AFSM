@@ -17,7 +17,14 @@ import Control.Arrow
 import Control.AFSM.CoreType
 import Control.AFSM.Core
 
--- newtype TF s a b = TF (s -> a -> (SM s a b, b))
+-- newtype TF s a b = TF (s -> a -> (SM s a b, b)
+
+transSM2TF :: SM t (s, a) (s, b) -> TF s a b
+transSM2TF (SM (TF f) t) = TF (f1 f t)
+  where
+    f1 f t s a = (newSM (f1 f' t') s', b)
+      where
+        (SM (TF f') t', (s', b)) = f t (s, a)
 
 -- Category instance
 
