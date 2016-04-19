@@ -59,13 +59,17 @@ arrSM f = newSM (\_ a ->(arrSM f, f a)) ()
 foldlSM :: (s -> a -> s) -> s -> SM s a s
 foldlSM f s = newSM f' s
   where
-    f' s' a' = let s'' = f s' a' in (newSM f' s'', s'')
+    f' s' a' = (newSM f' s'', s'')
+      where
+        s'' = f s' a'
 
 -- | the difference from foldlSM is it output the storage first.
 foldlDelaySM :: (s -> a -> s) -> s -> SM s a s
 foldlDelaySM f s = newSM f' s
   where
-    f' s' a' = let s'' = f s' a' in (newSM f' s'', s')
+    f' s' a' = (newSM f' s'', s')
+      where
+        s'' = f s' a'
 
 -- holdSM :: a -> SM (Event a) a
 -- holdSM = undefined
@@ -139,34 +143,34 @@ f >>>> g = composeSM g f
 
 
 firstSM :: SM s a b -> SM s (a, c) (b, c)
-firstSM sm = newSM (f1 $ tf sm) (st sm)
+firstSM (SM (TF f) s) = newSM (f1 f) s
   where
-    f1 f s (a, c) = (newSM (f1 $ tf sm') (st sm'), (b, c))
+    f1 f s (a, c) = (newSM (f1 f') s', (b, c))
       where
-        (sm', b) = f s a
+        (SM (TF f') s', b) = f s a
         
 secondSM :: SM s a b -> SM s (c, a) (c, b)
-secondSM sm = newSM (f1 $ tf sm) (st sm)
+secondSM (SM (TF f) s) = newSM (f1 f) s
   where
-    f1 f s (c, a) = (newSM (f1 $ tf sm') (st sm'), (c, b))
+    f1 f s (c, a) = (newSM (f1 f') s', (c, b))
       where
-        (sm', b) = f s a
+        (SM (TF f') s', b) = f s a
 
 productSM :: SM s0 a b -> SM s1 c d -> SM (s0, s1) (a, c) (b, d)
-productSM sm0 sm1 = newSM (f2 (tf sm0) (tf sm1)) (st sm0, st sm1)        
+productSM (SM (TF f0) s0) (SM (TF f1) s1) = newSM (f2 f0 f1) (s0, s1)
   where
-    f2 f0 f1 (s0, s1) (a, c) = (newSM (f2 (tf sm0') (tf sm1')) (st sm0', st sm1'), (b, d))
+    f2 f0 f1 (s0, s1) (a, c) = (newSM (f2 f0' f1') (s0', s1'), (b, d))
       where
-        (sm0', b) = f0 s0 a
-        (sm1', d) = f1 s1 c
+        (SM (TF f0') s0', b) = f0 s0 a
+        (SM (TF f1') s1', d) = f1 s1 c
 
 fanoutSM :: SM s0 a b -> SM s1 a c -> SM (s0, s1) a (b, c)
-fanoutSM sm0 sm1 = newSM (f2 (tf sm0) (tf sm1)) (st sm0, st sm1)
+fanoutSM (SM (TF f0) s0) (SM (TF f1) s1) = newSM (f2 f0 f1) (s0, s1)
   where
-    f2 f0 f1 (s0, s1) a = (newSM (f2 (tf sm0') (tf sm1')) (st sm0', st sm1'), (b, c))
+    f2 f0 f1 (s0, s1) a = (newSM (f2 f0' f1') (s0', s1'), (b, c))
       where
-        (sm0', b) = f0 s0 a
-        (sm1', c) = f1 s1 a
+        (SM (TF f0') s0', b) = f0 s0 a
+        (SM (TF f1') s1', c) = f1 s1 a
 
 (****) = productSM
 
@@ -191,8 +195,6 @@ secondSM sm = absorb (\(c, a) -> a) (\(c, a) b -> (c, b)) sm
 -- ArrowApply
 
 -- ArrowLoop
-
-
 
 
 
@@ -245,6 +247,6 @@ exec (SM (TF f) s) (x:xs) = (sm'', b:bs)
 instance Functor (SM s a) where
   fmap = fmapSM
 
--- fmapSM f sm = sm >>> arr f
+-- | fmapSM f sm = sm >>> arr f
 fmapSM :: (b -> c) -> SM s a b -> SM s a c
 fmapSM f sm = absorbR sm f

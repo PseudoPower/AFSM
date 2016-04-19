@@ -62,11 +62,11 @@ instance SMFunctor ((,) a) where
     
    
 smexecSM :: SMFunctor f => SM s a b -> SM s (f a) (f b)
-smexecSM sm = newSM (f sm) (st sm)
+smexecSM (SM (TF f0) s0') = newSM (f1 f0) s0'
   where
-    f sm _ fa = (newSM (f sm') (st sm'), fb)
+    f1 f0 s0 fa = (newSM (f1 f0') s0', fb)
       where 
-      (sm', fb) = smexec sm fa
+      ((SM (TF f0') s0'), fb) = smexec (newSM f0 s0) fa
     
 -- Advanced functions
 
@@ -99,7 +99,7 @@ bindSM ma sm = (sm', join mmb)
 
 {-
 
--- need WrappedMonad, tt is not neccesary now.
+-- require WrappedMonad.
 
 class SMMonad m where
   (>>>=) :: m a -> SM s a (m b) -> (SM s a (m b), m b)
