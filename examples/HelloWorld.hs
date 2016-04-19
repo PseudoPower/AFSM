@@ -35,10 +35,12 @@ timesTwoSM :: SM () Int Int
 timesTwoSM  = arrSM (\a -> a * 2)
 
 -- combination machine
+-- sum x*2
 ttSM = timesTwoSM >>>> sumSM 
 
 ret2 = smfmap ttSM test0
 
+-- (x+1, x*2)
 ptSM = plusOneSM &&&& timesTwoSM
 
 ret3 = smfmap ptSM test0
