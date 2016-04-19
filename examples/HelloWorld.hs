@@ -50,8 +50,8 @@ mergeOutSM = simpleSM (\s (a,b)->(s, a+b)) ()
 
 -- example 3
 data StackOP = Push Int
-             |Pop
-             |Max
+             | Pop
+             | Max
              deriving Show
              
 
