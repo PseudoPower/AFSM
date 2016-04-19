@@ -9,7 +9,7 @@
 -- Portability :  portable
 -----------------------------------------------------------------------------
 
-module Control.AFSM.SMMonoid where
+module Control.AFSM.Draft.SMMonoid where
 
 import Data.Monoid
 import Control.Category

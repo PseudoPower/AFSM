@@ -19,7 +19,7 @@
 {-# LANGUAGE UndecidableInstances #-}
 -- {-# LANGUAGE IncoherentInstances #-}
 
-module Control.AFSM.Pretty where
+module Control.AFSM.Draft.Pretty where
 
 import Data.List
 import Control.Category
@@ -27,7 +27,7 @@ import Control.Arrow
 
 import Control.AFSM.CoreType
 import Control.AFSM.Core
-import Control.AFSM.SMMonoid
+import Control.AFSM.Draft.SMMonoid
 
 
 simpleSMS :: String -> (s -> a -> (s, b)) -> s -> SM String a b
@@ -120,15 +120,15 @@ drawPipesHelper n (x:xs) = (drawOnePipe n 0 x):(drawPipesHelper n xs)
     
     
 -- testP :: [(Int, Int)]
--- testP = [(1,3), (2,5), (3,6), (9,7),(10,8)]
+testP = [(1,3), (2,5), (3,6), (9,7),(10,8)]
 
--- ret0 = solvePipesA testP
+ret0 = solvePipesA testP
 
--- ret1 = (drawPipesHelper 11 ret0) ++ [replicate 11 '\n']
+ret1 = (drawPipesHelper 11 ret0) ++ [replicate 11 '\n']
 
--- ret2 = transpose ret1
+ret2 = transpose ret1
 
--- ret3 = concat ret2
+ret3 = concat ret2
 
 oneFuncSolvePipes :: Int -> [(Int, Int)] -> [String]
 oneFuncSolvePipes n ps = ret2
