@@ -32,7 +32,7 @@ plusOneSM  = simpleSM (\() a -> ((), a + 1)) ()
 ret1 = smfmap plusOneSM test0
 
 timesTwoSM :: SM () Int Int
-timesTwoSM  = simpleSM (\() a -> ((), a * 2)) ()
+timesTwoSM  = arrSM (\a -> a * 2)
 
 -- combination machine
 ttSM = timesTwoSM >>>> sumSM 
