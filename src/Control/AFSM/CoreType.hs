@@ -15,8 +15,8 @@ module Control.AFSM.CoreType where
 
 -- | 'TF' is a type representing a transition function.
 --     s: storage, a: input, b: output
---   Let's explain more about 'TF'. When a state gets an input a, 
---   it should do three things base on the storage and input: 
+--   Let's explain more about 'TF'. When a state gets an input a,
+--   it should do three things base on the storage and input:
 --     find the next state, update storage and output b.
 --   That's why it looks like this:
 --     (storage -> a -> (SM newState newStorage, b))
@@ -47,7 +47,7 @@ newSM :: (s -> a -> (SM s a b, b)) -> s -> SM s a b
 newSM tf s = SM (TF tf) s
 
 -- | build a simple SM which have only one TF.
-simpleSM :: (STF s a b) -> s -> SM s a b
+simpleSM :: (s -> a -> (s, b)) -> s -> SM s a b
 {-# INLINE simpleSM #-}
 simpleSM f s = newSM f' s
   where
@@ -56,12 +56,12 @@ simpleSM f s = newSM f' s
         (s'', b) = f s' a'
 
 {-
--- | build a SM which can choose STF based on the input        
+-- | build a SM which can choose STF based on the input
 simplChcSM :: (s -> a -> STF s a b) -> s -> SM s a b
 simplChcSM cf s = simpleSM f s
   where
     f s a = (s', b)
-      where 
+      where
         (s', b) = (cf s a) s a
 -}
 
@@ -69,7 +69,7 @@ instance (Show s) => Show (SM s a b) where
   show (SM f s) = show s
 
 -- | 'SMH' is the type of the state machine with hidden or no storage.
---   It is the same type with 
+--   It is the same type with
 --     Circuit a b = Circuit (a -> Circuit a b, b)
 type SMH a b = SM () a b
 

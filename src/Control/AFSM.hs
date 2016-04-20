@@ -29,16 +29,18 @@ module Control.AFSM (
   -- * The 'TF' type
   TF(..),
 
-  -- * Constructors
+  -- * SM Constructors
   newSM,
   simpleSM,
   -- simplChcSM,
 
   tf, st,
 
-  -- * Basic State Machines
-  sourceSM,
+  -- * Source Constructors
+  buildSrc,
+  simpleSrc,
 
+  -- * Basic State Machines
   constSM,
   idSM,
 

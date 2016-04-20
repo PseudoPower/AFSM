@@ -25,14 +25,20 @@ infixr 1 >>>>, <<<<
 -- Basic State Machines
 
 -- | build a source, for example:
---   sourceSM $ foldlDelaySM (const (+1)) 0
+--   buildSrc $ foldlDelaySM (const (+1)) 0
 --     [0..]
---   sourceSM $ foldlDelaySM (+) 1
+--   buildSrc $ foldlDelaySM (+) 1
 --     [1, 2, 4, 8, ...]
-sourceSM :: SM s a a -> [a]
-sourceSM sm = a:(sourceSM sm')
+buildSrc :: SM s a a -> [a]
+buildSrc sm = a:(buildSrc sm')
   where
     (sm', a) = step sm a
+
+-- | build a simple source, which ignore the inputs
+simpleSrc :: SM s () a -> [a]
+simpleSrc sm = a:(simpleSrc sm')
+  where
+    (sm', a) = step sm ()
 
 -- | build a SM which just output its input
 idSM :: SM () a a
@@ -50,7 +56,7 @@ delaySM :: a -> SM a a a
 delaySM a = newSM f a
   where
     f s' a' = ((newSM f a'), s')
-    
+
 -- | build a SM from a function
 arrSM :: (a -> b) -> SM () a b
 arrSM f = newSM (\_ a ->(arrSM f, f a)) ()
@@ -99,14 +105,14 @@ absorbLSM (SM (TF f0) s0) (SM (TF f1) s1) = newSM (f2 f0 f1 s0) s1
 
 -- | absorb a function.
 --     absorbR sm f = absorbRSM sm (arrSM f)
---     absorbL f sm = absorbLSM (arrSM f) sm 
+--     absorbL f sm = absorbLSM (arrSM f) sm
 absorbR :: SM s a b -> (b -> c) -> SM s a c
 absorbR (SM (TF f0) s) f1 = newSM (f2 f0) s
   where
     f2 f0 s a = (newSM (f2 f0') s', f1 b)
       where
         (SM (TF f0') s', b) = f0 s a
-        
+
 absorbL :: (a -> b) -> SM s b c -> SM s a c
 absorbL f0 (SM (TF f1) s) = newSM (f2 f1) s
   where
@@ -118,7 +124,7 @@ absorbL f0 (SM (TF f1) s) = newSM (f2 f1) s
 -- Category instance
 
 -- idSM
-       
+
 -- | compose two SM and merge their storage.
 composeSM :: SM s1 b c -> SM s0 a b -> SM (s0, s1) a c
 composeSM (SM (TF f1) s1) (SM (TF f0) s0) = newSM (f2 f0 f1) (s0, s1)
@@ -127,7 +133,7 @@ composeSM (SM (TF f1) s1) (SM (TF f0) s0) = newSM (f2 f0 f1) (s0, s1)
       where
         (SM (TF f0') s0', b) = f0 s0 a
         (SM (TF f1') s1', c) = f1 s1 b
-        
+
 -- | Right-to-left composition
 (<<<<) :: SM s1 b c -> SM s0 a b -> SM (s0, s1) a c
 (<<<<) = composeSM
@@ -148,7 +154,7 @@ firstSM (SM (TF f) s) = newSM (f1 f) s
     f1 f s (a, c) = (newSM (f1 f') s', (b, c))
       where
         (SM (TF f') s', b) = f s a
-        
+
 secondSM :: SM s a b -> SM s (c, a) (c, b)
 secondSM (SM (TF f) s) = newSM (f1 f) s
   where
@@ -181,7 +187,7 @@ firstSM :: SM s a b -> SM s (a, c) (b, c)
 firstSM sm = absorb (\(a, c) -> a) (\(a, c) b -> (b, c)) sm
 
 secondSM :: SM s a b -> SM s (c, a) (c, b)
-secondSM sm = absorb (\(c, a) -> a) (\(c, a) b -> (c, b)) sm 
+secondSM sm = absorb (\(c, a) -> a) (\(c, a) b -> (c, b)) sm
 
 (****) :: SM s0 a b -> SM s1 c d -> SM (s0, s1) (a, c) (b, d)
 (****) sm0 sm1 = merge (\(a, c) -> (a, c)) (\a b d -> (b, d)) sm0 sm1
@@ -209,7 +215,7 @@ execSM (SM (TF f) s) = newSM (f1 f) s
 
 joinSM :: Monad m => SM s a (m (m b)) -> SM s a (m b)
 joinSM sm = absorbR sm join
-        
+
 concatSM :: SM s a [[b]] -> SM s a [b]
 concatSM = joinSM
 
@@ -241,7 +247,7 @@ exec (SM (TF f) s) (x:xs) = (sm'', b:bs)
   where
     (sm', b) = f s x
     (sm'', bs) = (exec sm' xs)
-    
+
 -- Functor
 
 instance Functor (SM s a) where
