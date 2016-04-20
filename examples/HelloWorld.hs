@@ -18,19 +18,29 @@ import Control.AFSM.SMH
 
 import Data.Maybe
 
--- basic machines
+
 test0 = [1, 2, 3, 4]
 
+
+
+-- basic machines
+
+
+
+-- >>> smfmap sumSM test0
+-- [1, 3, 6, 10]
 sumSM :: SM Int Int Int
 sumSM  = simpleSM (\s a -> (s+a, s+a)) 0 
 
-ret0 = smfmap sumSM test0
 
+-- >>> smfmap plusOneSM test0
+-- [2, 3, 4, 5]
 plusOneSM :: SM () Int Int
 plusOneSM  = simpleSM (\() a -> ((), a + 1)) ()
 
-ret1 = smfmap plusOneSM test0
 
+-- >>> smfmap timesTwoSM test0
+-- [2, 4, 6, 8]
 timesTwoSM :: SM () Int Int
 timesTwoSM  = arrSM (\a -> a * 2)
 
