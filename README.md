@@ -119,7 +119,7 @@ We are planning to removing GADTs extension, then `SM a b` becomes `SM s a b`. T
 
 ## Examples
 
-### HelloWorld[HelloWorld.hs](https://github.com/PseudoPower/AFSM/blob/master/examples/HelloWorld.hs)
+### HelloWorld([HelloWorld.hs](https://github.com/PseudoPower/AFSM/blob/master/examples/HelloWorld.hs))
 
 It shows basic components of AFSM. And an example about operating stacks.
 
