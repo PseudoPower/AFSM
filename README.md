@@ -119,15 +119,13 @@ We are planning to removing GADTs extension, then `SM a b` becomes `SM s a b`. T
 
 ## Examples
 
-### Reverse Polish notation([RPN.hs](https://github.com/PseudoPower/AFSM/blob/master/examples/RPN.hs))
+### HelloWorld[HelloWorld.hs](https://github.com/PseudoPower/AFSM/blob/master/examples/HelloWorld.hs)
 
-To run this example, just type `make RPN` or `ghci examples/RPN.hs -isrc/`. The makefile will be maintained for all examples. Then you can run `main` function and type some infix expressions, such as  `3 * (2 - 3) + (4 - 2 * 3), 3 + 4 * 2 / (1 - 5) * 2 + 3`.
+It shows basic components of AFSM. And an example about operating stacks.
 
-It is also known as postfix notation, and it is very straightforward example. The input is the infix expression, and the output is the value. First, we build a SM named in2post to convert infix notation to postfix expression. Then we build a SM named post2ret to evaluate the valus. Finally, we use them to compose `in2ret = in2post >>> post2ret`.
+### Toys([Toys.hs](https://github.com/PseudoPower/AFSM/blob/master/examples/Toys.hs))
 
-### toys([toys.hs](https://github.com/PseudoPower/AFSM/blob/master/examples/toys.hs))
-
-A collection of toys.
+***A collection of toys***
 
 The Fibonacci sequence
 
@@ -135,11 +133,19 @@ The random number sequence
 
 The prime number sequence
 
+### Reverse Polish notation([RPN.hs](https://github.com/PseudoPower/AFSM/blob/master/examples/RPN.hs))
+
+To run this example, just type `make RPN` or `ghci examples/RPN.hs -isrc/`. The makefile will be maintained for all examples. Then you can run `main` function and type some infix expressions, such as  `3 * (2 - 3) + (4 - 2 * 3), 3 + 4 * 2 / (1 - 5) * 2 + 3`.
+
+It is also known as postfix notation, and it is very straightforward example. The input is the infix expression, and the output is the value. First, we build a SM named in2post to convert infix notation to postfix expression. Then we build a SM named post2ret to evaluate the valus. Finally, we use them to compose `in2ret = in2post >>> post2ret`.
+
+
+
 ## To-Do
   * Basic state machines (continuous adding some new SMs.)
   * Event (It is similar with the Maybe data type, but in our control, and after defining Event, we can do some interesting things.)
   * TF (compose some TFs to one TF, it means several SM shares the same storage.)
-  * More high order functions
+  * More high order functions (distinguish which functions are essential.)
   * Another DSL to build transition functions? (It is not necessary now.)
 
 ## References
