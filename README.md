@@ -44,8 +44,11 @@ data SM a b where
 --  >--->| SM s a b |>--->
 --       \----------/
 --
--- Here is a slight difference from Arrow class, so `SM s a b` is not an instance of Arrow class, but you can do everything the same as an Arrow instance.
--- And `SM () a b` is still an instance of Arrow, and `hideStorage :: SM s a b -> SM () a b` can help you to achieve easily.
+-- Here is a slight difference from Arrow class, 
+--   so `SM s a b` is not an instance of Arrow class, 
+--   but you can do everything the same as an Arrow instance.
+-- And `SM () a b` is still an instance of Arrow, 
+--   and `hideStorage :: SM s a b -> SM () a b` can help you to achieve easily.
 -- It is a trade-off between keeping track the storage and having the instance of Arrow.
 --
 -- (>>>>) :: SM s a b -> SM t b c -> SM (s,t) a c
@@ -63,6 +66,7 @@ data SM a b where
 --  >--->|>-------------->|>--->
 --    c  \----------------/  c
 --
+--
 -- (****) :: SM s a b -> SM t c d -> SM (s,t) (a, c) (b, d)
 --
 --    a  /----------------\  b
@@ -70,6 +74,7 @@ data SM a b where
 --       |                |
 --  >--->|>-> SM t c d >->|>--->
 --    c  \----------------/  d
+--
 --
 -- (&&&) :: SM s a b -> SM t a c -> SM (s,t) a (b, c)
 --
@@ -82,7 +87,11 @@ data SM a b where
 --            \----------/
 --
 
--- execute SM s a b with inputs, you can think `SM s a b` is a stateful function `f :: a -> b` with storage `s`. `step` is the apply function. `exec` is the mapping function. We also introduce our own Functor class, `SMFunctor`, and `smexec :: SMFunctor f => SM s a b -> f a -> (SM s a b, f b)`.
+-- execute SM s a b with inputs, 
+--   you can think `SM s a b` is a stateful function `f :: a -> b` with storage `s`. 
+--   `step` is the apply function. `exec` is the mapping function. 
+-- We also introduce our own Functor class, `SMFunctor`. 
+--   And `smexec :: SMFunctor f => SM s a b -> f a -> (SM s a b, f b)`.
 
 step :: SM s a b -> a -> (SM s a b, b)
 
