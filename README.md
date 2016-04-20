@@ -1,6 +1,6 @@
 # Arrowized functional state machines
 
-Because this readme file becomes so long, I moved other models to [models.md](doc/models.md), and I am able to detail each of them without worrying about the length of the article, :)
+Because this readme file becomes so long, I moved other models to [models.md](docs/models.md), and I am able to detail each of them without worrying about the length of the article, :)
 
 ## Update notes
 
@@ -10,7 +10,7 @@ Now, the GADTs extension has been removed, and a lot of things should been clear
 
 `type SMH a b = SM () a b` is still an Arrow instance, and `hideStorage :: SM s a b -> SM () a b` can help you transform `SM s a b` to `SM () a b`, if you want to use the Arrow notation. The cost is that the information about storage is gone.
 
-`type SMState s a b = (s -> a -> (SM a b, b))` becomes `data TF = TF (s -> a -> (SM a b, b))`. The reason about this changing is that `type SMState` is just defining an alias of an existing type. So it is not possible to define a instance for `SMState`. We observed that  `(s -> a -> (SM a b, b))` is similiar with `ST monad`, and its behavior is also similiar with `ST monad`. I think it is a good chance to do something around.
+`type SMState s a b = (s -> a -> (SM a b, b))` becomes `data TF = TF (s -> a -> (SM a b, b))`. The reason about this changing is that `type TF` is just defining an alias of an existing type. So it is not possible to define a instance for `TF`. We observed that  `(s -> a -> (SM a b, b))` is similiar with `ST monad`, and its behavior is also similiar with `ST monad`. I think it is a good chance to do something around.
 
 Although our original idea is removing `Time` concept and adding `Storage` concept, now it is much closer with `Circuit` model or `State` model than `AFRP`. More precisely, it is a mixture of `Circuit` and `State`.
 
@@ -26,74 +26,84 @@ Now, let us put these two ways together. Our plan is using the stateful function
 
 The `SM a b` type denotes stateful functions from `a` to `b`. Also, It is an instance of the `Arrow` type class.
 ```
--- | 'SMState' is a type representing a transition function.
+-- | 'TF' is a type representing a transition function.
 --     s: storage, a: input, b: output
---   Let's explain more about 'SMState'. When a state gets an input a, 
---   it should do three things base on the storage and input: 
---     find the next state, update storage and output b.
+--   Also, it represents the state in SM.
+--   Let's explain more about 'TF'. When a state gets an input a,
+--   it should do three things base on the storage and input:
+--     find the next state(TF), update storage and output b.
 --   That's why it looks like this:
---     (storage -> a -> (SM newState newStorage, b))
-type SMState s a b = (s -> a -> (SM a b, b))
+--     (storage -> a -> (SM newTF newStorage, b))
+type TF s a b = (s -> a -> (SM a b, b))
 
 -- | 'SM' is the type representing state machines.
 data SM a b where
-  SM :: (SMState s a b) -> s -> SM a b
+  SM :: (TF s a b) -> s -> SM s a b
 --
---    a  /--------\  b
---  >--->| SM a b |>--->
---       \--------/
+--    a  /----------\  b
+--  >--->| SM s a b |>--->
+--       \----------/
 --
--- (>>>) :: SM a b -> SM b c -> SM a c
+-- Here is a slight difference from Arrow class, so `SM s a b` is not an instance of Arrow class, but you can do everything the same as an Arrow instance.
+-- And `SM () a b` is still an instance of Arrow, and `hideStorage :: SM s a b -> SM () a b` can help you to achieve easily.
+-- It is a trade-off between keeping track the storage and having the instance of Arrow.
 --
---    a  /--------\  b  /--------\  c
---  >--->| SM a b |>--->| SM b c |>--->
---       \--------/     \--------/
+-- (>>>>) :: SM s a b -> SM t b c -> SM (s,t) a c
+--
+--    a  /----------\  b  /----------\  c
+--  >--->| SM s a b |>--->| SM t b c |>--->
+--       \----------/     \----------/
 --
 --
--- first :: SM a b -> SM (a, c) (b, c)
+-- firstSM :: SM s a b -> SM s (a, c) (b, c)
 --
---    a  /--------------\  b
---  >--->|>-> SM a b >->|>--->
---       |              |
---  >--->|>------------>|>--->
---    c  \--------------/  c
+--    a  /----------------\  b
+--  >--->|>-> SM s a b >->|>--->
+--       |                |
+--  >--->|>-------------->|>--->
+--    c  \----------------/  c
 --
--- (***) :: SM a b -> SM c d -> SM (a, c) (b, d)
+-- (****) :: SM s a b -> SM t c d -> SM (s,t) (a, c) (b, d)
 --
---    a  /--------------\  b
---  >--->|>-> SM a b >->|>--->
---       |              |
---  >--->|>-> SM c d >->|>--->
---    c  \--------------/  d
+--    a  /----------------\  b
+--  >--->|>-> SM s a b >->|>--->
+--       |                |
+--  >--->|>-> SM t c d >->|>--->
+--    c  \----------------/  d
 --
--- (&&&) :: SM a b -> SM a c -> SM a (b, c)
+-- (&&&) :: SM s a b -> SM t a c -> SM (s,t) a (b, c)
 --
---            /--------\  b
---       /--->| SM a b |>---\
---    a  |    \--------/    |  (b,c)
---  >--->|                  |>------->
---       |    /--------\  c |
---       \--->| SM a c |>---/
---            \--------/
+--            /----------\  b
+--       /--->| SM s a b |>---\
+--    a  |    \----------/    |  (b,c)
+--  >--->|                    |>------->
+--       |    /----------\  c |
+--       \--->| SM t a c |>---/
+--            \----------/
 --
 
--- execute SM a b with input [a].
-exec :: SM a b -> [a] -> (SM a b, [b])
+-- execute SM s a b with inputs, you can think `SM s a b` is a stateful function `f :: a -> b` with storage `s`. `step` is the apply function. `exec` is the mapping function. We also introduce our own Functor class, `SMFunctor`, and `smexec :: SMFunctor f => SM s a b -> f a -> (SM s a b, f b)`.
+
+step :: SM s a b -> a -> (SM s a b, b)
+
+exec :: SM s a b -> [a] -> (SM s a b, [b])
+
+smfmap :: SM s a b -> [a] -> [b]
 ```
 
 From a theoretical point of view, this model is a simplified version of FRP, but adding states on functions directly. In another word, it is switching the focus from time to states.
 
-From an engnieering point of view, the other difference from AFRP(Yampa) is that we provide the constructor to use the transition function `SMState s a b :: s -> a -> (SM a b, b)` to build `SM a b` directly where `s` donates the storage type.
+From an engnieering point of view, the other difference from AFRP(Yampa) is that we provide the constructor to use the transition function `TF s a b :: s -> a -> (SM s a b, b)` to build `SM s a b` directly where `s` donates the storage type.
 
 ### Simplifed model
 
 In functional reactive programming(FRP), the key concepts are the signal, `Signal a :: Time -> a`, and the signal function from signal to signal, `SF a b :: Signal a -> Signal b`.
 
-The model of FRP is beautiful, but one diffcult thing is that the signal is continuous function, and our computers are discrete systems.
+The model of FRP is beautiful, but one difficult thing is that the signal is continuous function, and our computers are discrete systems.
 
 However, what if we do not care about time, and only focus on the sequence of input. There is reason to believe that computational tasks usually are time-insensitive. For example, the parsing process. So `[a]` and `[Event a]` are the only things we expected in our system.
 
-For discrete system, simplifying the input type is kind of generalizing `[(Time,a)]` to `[a]`. This simplifed model is still able to process the time sequences by using `[(Time, a)]` as the input. In conclusion, we doesn't consider time as an essential part of the input, but if the input involves time, users can add time back as a part of the input.
+For discrete system, simplifying the input type is kind of generalizing `[(Time,a)]` to `[a]`. This simplified model is still able to process the time sequences by using `[(Time, a)]` as the input. In conclusion, we doesn't consider time as an essential part of the input, but if the input involves time, users can add time back as a part of the input.
 
 ### Stateful function(Storage)
 
@@ -105,7 +115,7 @@ But I prefer to think the pure function as the stateful function with state `()`
 
 The key idea is using the GADTs extension to hide the state(storage) type. If we do not use the GADTs extension, then `SM a b` will become `SM s a b` where `s` denotes the state(storage) type. However, after hiding the storage type, it is the same with `Circuit a b`. The funny thing is that we come from AFRP, and end up with Circuit.
 
-We are planning to removing GADTs extension, then `SM a b` becomes `SM s a b`. The benifit is that we can extract the storage from a SM, and the limitation is that we cannot put itself as the storage or do something may cause inifinite type. Also, when we put several SMs together, the type of storage will be in a mess. It's the reason we use GADTs to hide the type of storage before, but now we still have a way to hide the storage if you never want to extract it, `hideStorage :: SM s a b -> SM () a b`. 
+We are planning to removing GADTs extension, then `SM a b` becomes `SM s a b`. The benefit is that we can extract the storage from a SM, and the limitation is that we cannot put itself as the storage or do something may cause infinite type. Also, when we put several SMs together, the type of storage will be in a mess. It's the reason we use GADTs to hide the type of storage before, but now we still have a way to hide the storage if you never want to extract it, `hideStorage :: SM s a b -> SM () a b`.
 
 ## Examples
 
@@ -115,12 +125,22 @@ To run this example, just type `make RPN` or `ghci examples/RPN.hs -isrc/`. The 
 
 It is also known as postfix notation, and it is very straightforward example. The input is the infix expression, and the output is the value. First, we build a SM named in2post to convert infix notation to postfix expression. Then we build a SM named post2ret to evaluate the valus. Finally, we use them to compose `in2ret = in2post >>> post2ret`.
 
+### toys([toys.hs](https://github.com/PseudoPower/AFSM/blob/master/examples/toys.hs))
+
+A collection of toys.
+
+The Fibonacci sequence
+
+The random number sequence
+
+The prime number sequence
 
 ## To-Do
-  * Basic state machines
-  * Event
+  * Basic state machines (continuous adding some new SMs.)
+  * Event (It is similar with the Maybe data type, but in our control, and after defining Event, we can do some interesting things.)
+  * TF (compose some TFs to one TF, it means several SM shares the same storage.)
   * More high order functions
-  * Another DSL to build transition functions?
+  * Another DSL to build transition functions? (It is not necessary now.)
 
 ## References
 [Functional Reactive Programming, Continued](http://haskell.cs.yale.edu/wp-content/uploads/2011/02/workshop-02.pdf)
@@ -140,5 +160,5 @@ It is also known as postfix notation, and it is very straightforward example. Th
   * `type State s a b = (s, a) -> (s, b)`.
 
 [Haskell/Arrow tutorial](https://en.wikibooks.org/wiki/Haskell/Arrow_tutorial)
-  * the Arrow tutorial with `Circuit` model. 
-  * `newtype Circuit a b = Circuit (a -> (Circuit a b, b))`. 
+  * the Arrow tutorial with `Circuit` model.
+  * `newtype Circuit a b = Circuit (a -> (Circuit a b, b))`.
