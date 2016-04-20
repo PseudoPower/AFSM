@@ -9,7 +9,7 @@
 -- HelloWorld
 -----------------------------------------------------------------------------
 
--- {-# LANGUAGE PartialTypeSignatures #-}
+{-# LANGUAGE PartialTypeSignatures #-}
 
 module HelloWorld where
 
@@ -18,45 +18,56 @@ import Control.AFSM.SMH
 
 import Data.Maybe
 
+-- | x_i donates the ith element of the input, y_i donates the ith element of the output.
 
-test0 = [1, 2, 3, 4]
-
+-- $setup
+-- >>> let test0 = [1,2,3,4]::[Int]
 
 
 -- basic machines
 
 
-
+-- | the sum of the history, y_n = \sum_{i=1}^n x_i
 -- >>> smfmap sumSM test0
--- [1, 3, 6, 10]
+-- [1,3,6,10]
 sumSM :: SM Int Int Int
 sumSM  = simpleSM (\s a -> (s+a, s+a)) 0 
 
-
+-- | y_n = x_n + 1
 -- >>> smfmap plusOneSM test0
--- [2, 3, 4, 5]
+-- [2,3,4,5]
 plusOneSM :: SM () Int Int
 plusOneSM  = simpleSM (\() a -> ((), a + 1)) ()
 
-
+-- | y_n = x_n * 2
 -- >>> smfmap timesTwoSM test0
--- [2, 4, 6, 8]
+-- [2,4,6,8]
 timesTwoSM :: SM () Int Int
 timesTwoSM  = arrSM (\a -> a * 2)
 
 -- combination machine
--- sum x*2
+
+-- | y_n = \sum_{i=1}^n x_i * 2
+-- >>> smfmap ttSM test0
+-- [2,6,12,20]
 ttSM = timesTwoSM >>>> sumSM 
 
-ret2 = smfmap ttSM test0
-
--- (x+1, x*2)
+-- | y_n = (x_n + 1, x_n * 2)
+-- >>> smfmap ptSM test0
+-- [(2,2),(3,4),(4,6),(5,8)]
 ptSM = plusOneSM &&&& timesTwoSM
 
-ret3 = smfmap ptSM test0
 
+-- |
+-- >>> smfmap mergeOutSM [(2,2),(3,4),(4,6),(5,8)]
+-- [4,7,10,13]
+--
+-- | y_n = (x_n + 1) + (x_n * 2)
+-- >>> smfmap ((plusOneSM &&&& timesTwoSM) >>>> mergeOutSM) test0
+-- [4,7,10,13]
 mergeOutSM :: SM () (Int, Int) Int
-mergeOutSM = simpleSM (\s (a,b)->(s, a+b)) ()
+mergeOutSM = arrSM (\(a,b)->a+b)
+
 
 -- example 3
 data StackOP = Push Int
@@ -92,17 +103,23 @@ maxStk ((x:xs), (y:ys)) = (((x:xs), (y:ys)), y)
 
 initial = ([],[])
 -}
+
 sf s (Push a) =  pushStk s a
 sf s Pop = popStk s
 sf s Max =  maxStk s
 
+-- | The stroage type is changing during switching the implementation.
+--   There are three ways to handle this issue,
+--     1. Remove the type signature of maxSM
+--     2. Use hideStorage to hide the storage type
+--     3. Use the PartialTypeSignatures extension, leave a hole in the type signature.
+--   Personaly, I prefer to use the third one, 
+--     because the input type and output type are decidable.
+-- >>> smfmap maxSM [Push 5, Push 3, Push 2, Max, Push 7, Max, Pop, Max]
+-- [5,3,2,5,7,7,7,5]  
+maxSM :: SM _ StackOP Int
+maxSM = simpleSM sf initial 
 
-maxSM :: SM () StackOP Int
-maxSM = hideStorage $ simpleSM sf initial 
- 
-
-
-  
-ret4 = smfmap maxSM [Push 5, Push 3, Push 2, Max, Push 7, Max, Pop, Max]
-           
+-- maxSM :: SM () StackOP Int
+-- maxSM = hideStorage $ simpleSM sf initial            
 
