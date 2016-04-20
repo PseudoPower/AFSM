@@ -28,13 +28,13 @@ ST Monad is a simpler version of State. ST is the same with `State s () b`. But 
 
 ### Circuit
 
-### Ways to have the local storage
+### Two ways to have the local storage
 
 1. If we can switch the transition function dynamically, TF a b = (a -> (TF a b, b)). It gives us a chance to hide the local variables into the transition function.
 
 2. Also, if it is an instance of ArrowLoop, we can use `delay` and `loop` to have local variables. This also requires the dynamically switching feature, and it is more complex than the first one, but the benefit is that it is able to keep the information of the storage.
 
-3. Otherwise, for example, `ST s ([Int]->[Int])`, we should Build `TF a b = (a -> (TF a b, b))` by ourselves in the output function `[Int] -> [Int]`.
+3. Otherwise, we should use these two ideas to have the local storage by ourselves. For example, `ST s ([Int]->[Int])`, we can build `TF a b = (a -> (TF a b, b))` in the output function `[Int] -> [Int]`. 
 
 ## Compare to other models 
 
