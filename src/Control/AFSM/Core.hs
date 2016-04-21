@@ -27,7 +27,7 @@ infixr 1 ^>>>, >>>^
 infixr 1 ^<<<, <<<^
 
 
--- Source
+-- | Source
 --   There are two kinds of source. 
 --   First one is using the output of `SM s a a` as its input, then it becomes a perpetual motion, :)  
 --   Second one is a SM which ignore its input, and output something based on its storage.

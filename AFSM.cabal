@@ -16,7 +16,9 @@ build-type:          Simple
 extra-source-files:  
   README.md
   CHANGELOG.md
+  examples/HelloWorld.hs
   examples/RPN.hs
+  examples/Toys.hs
 cabal-version:       >=1.10
 library
   exposed-modules:
@@ -26,6 +28,8 @@ library
     Control.AFSM.Event
     Control.AFSM.SMFunctor
     Control.AFSM.SMH
+    Control.AFSM.TF
+    Control.AFSM.Util
   -- other-modules:       
   other-extensions:    Arrows, FlexibleInstances
   build-depends:       base >= 4.7 && < 5

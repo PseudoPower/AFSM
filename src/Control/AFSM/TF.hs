@@ -19,6 +19,7 @@ import Control.AFSM.Core
 
 -- newtype TF s a b = TF (s -> a -> (SM s a b, b)
 
+-- | transform `SM t (s, a) (s, b)` to `TF s a b`
 transSM2TF :: SM t (s, a) (s, b) -> TF s a b
 transSM2TF (SM (TF f) t) = TF (f1 f t)
   where

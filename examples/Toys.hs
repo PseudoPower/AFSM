@@ -11,7 +11,7 @@
 
 module Toys where
 
-import System.Random
+-- import System.Random
 import Data.Tuple
 
 import Data.Sequence (Seq, empty, (|>), ViewL(..), viewl)
@@ -38,6 +38,7 @@ ourfibs = simpleSrc fibsSM
 -------------------
 -- Random Source --
 -------------------
+{-
 randSM :: StdGen -> SM StdGen () Int
 randSM = simpleSM (\g () -> swap $ next g)
 
@@ -45,7 +46,7 @@ randSrc :: Int -> [Int]
 randSrc = simpleSrc.randSM.mkStdGen
 
 randSamples = take 5 $ randSrc 111
-
+-}
 -------------------
 -- Prime Numbers --
 -------------------

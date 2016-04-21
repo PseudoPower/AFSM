@@ -26,9 +26,11 @@ import Control.Arrow
 import Control.AFSM.CoreType
 import Control.AFSM.Core
 
+-- | the same constructor with newSM
 newSMH :: (() -> a -> (SMH a b, b)) -> SMH a b
 newSMH f = newSM f ()
 
+-- | the same constructor with simpleSM
 simpleSMH :: (s -> a -> (s, b)) -> s -> SMH a b
 simpleSMH f s = newSMH (f' s)
   where
@@ -44,7 +46,7 @@ hideStorage (SM (TF f) s) = newSMH (f1 f s)
       where
         (SM (TF f') s', b) = f s a
 
--- | absorb a SM and hide its storage.
+-- | absorb the right SM and hide its storage.
 absorbRSM :: SM s0 a b -> SM s1 b c -> SM s0 a c
 absorbRSM (SM (TF f0) s0) (SM (TF f1) s1) = newSM (f2 f0 f1 s1) s0
   where
@@ -53,6 +55,7 @@ absorbRSM (SM (TF f0) s0) (SM (TF f1) s1) = newSM (f2 f0 f1 s1) s0
         (SM (TF f0') s0', b) = f0 s0 a
         (SM (TF f1') s1', c) = f1 s1 b
 
+-- | absorb the left SM and hide its storage.
 absorbLSM :: SM s0 a b -> SM s1 b c -> SM s1 a c
 absorbLSM (SM (TF f0) s0) (SM (TF f1) s1) = newSM (f2 f0 f1 s0) s1
   where

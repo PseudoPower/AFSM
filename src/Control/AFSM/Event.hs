@@ -22,6 +22,7 @@ import Control.AFSM.SMFunctor
 -- | 'Event' type, there are 4 different events: event a, no event, error event string and exit event.
 -- data Event a = Event a | NoEvent | ErrEvent String | ExitEvent deriving (Show, Eq, Ord)
 
+-- | extract [a] from [Event a]
 extractEvents :: [Event a] -> [a]
 extractEvents [] = []
 extractEvents (x:xs) = case x of

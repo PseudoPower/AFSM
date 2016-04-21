@@ -22,18 +22,28 @@ module Control.AFSM (
   Event(..),
 
   SMFunctor(..),
+  
+  -- * The 'TF' type
+  TF(..),
+  
+  transSM2TF,
 
   -- * The 'SM' type
   SM(..),
-
-  -- * The 'TF' type
-  TF(..),
-
+  
   -- * SM Constructors
   newSM,
   simpleSM,
   
   tf, st,
+
+  -- * The 'SMH' type - SM with hidden storage
+  SMH(..),
+
+  newSMH,
+  simpleSMH,
+
+  hideStorage,
 
   -- * Source Constructors
   buildSrc,
@@ -70,15 +80,8 @@ module Control.AFSM (
 
   -- * Evaluation
   step,
-  exec,
+  exec
 
-  -- * The 'SMH' type - SM with hidden storage
-  SMH(..),
-
-  newSMH,
-  simpleSMH,
-
-  hideStorage
 
 ) where
 
