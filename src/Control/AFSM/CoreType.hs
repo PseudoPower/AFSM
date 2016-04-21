@@ -21,6 +21,8 @@ module Control.AFSM.CoreType where
 --   That's why it looks like this:
 --     (storage -> a -> (SM newState newStorage, b))
 --     type TF storage input output = (storage -> input -> (SM storage input output, output))
+--   Also, it is an instance of Arrow, it represents a machine without initial storage.
+--     composing two TF represents that two SM shares the same storage
 newtype TF s a b = TF (s -> a -> (SM s a b, b))
 
 -- | STF is the type of simple transition function.
@@ -75,6 +77,3 @@ type SMH a b = SM () a b
 
 -- | 'Event' type, there are 4 different events: event a, no event, error event string and exit event.
 data Event a = Event a | NoEvent | ErrEvent String | ExitEvent deriving (Show, Eq, Ord)
-
-
--- (SM (TF f0) s0) (SM (TF f1) s1)

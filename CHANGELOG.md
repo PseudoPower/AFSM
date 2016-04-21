@@ -4,6 +4,7 @@
   * change `data SM s a b = SM (SMState s a b) s` to `data SM s a b = SM (TF s a b) s`.
   * `SM s a b` is no longer an instance of Arrow, but `SM () a b` is still an instance of Arrow. `type SMH a b = SM () a b`.
   * the `SMFunctor` class, and `smfmap` helps you to use `SM s a b` as a normal function. 
+  * more examples.
 
 ## 0.1.2.0
 

@@ -32,8 +32,7 @@ module Control.AFSM (
   -- * SM Constructors
   newSM,
   simpleSM,
-  -- simplChcSM,
-
+  
   tf, st,
 
   -- * Source Constructors
@@ -53,15 +52,19 @@ module Control.AFSM (
 
 
   -- * Basic SM functions
-  composeSM, (>>>>), (<<<<),
+  composeSM, (>>>>), (<<<<), (^>>>), (>>>^), (^<<<), (<<<^),
 
   firstSM, secondSM, (****), (&&&&),
-
+  
+  leftSM, rightSM, (++++), (||||),
+  
+  loopSM,
+  
 
   absorb,
   merge,
 
-
+  -- * High order Machines
   execSM,
   concatSM,
 

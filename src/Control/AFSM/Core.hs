@@ -20,9 +20,18 @@ import Control.AFSM.Util
 
 infixr 3 ****
 infixr 3 &&&&
+infixr 2 ++++
+infixr 2 ||||
 infixr 1 >>>>, <<<<
+infixr 1 ^>>>, >>>^
+infixr 1 ^<<<, <<<^
 
--- Basic State Machines
+
+-- Source
+--   There are two kinds of source. 
+--   First one is using the output of `SM s a a` as its input, then it becomes a perpetual motion, :)  
+--   Second one is a SM which ignore its input, and output something based on its storage.
+--   The second one is easier to understand and use.
 
 -- | build a source, for example:
 --   buildSrc $ foldlDelaySM (const (+1)) 0
@@ -35,11 +44,16 @@ buildSrc sm = a:(buildSrc sm')
     (sm', a) = step sm a
 
 -- | build a simple source, which ignore the inputs
-simpleSrc :: SM s () a -> [a]
+--     fibsSM :: SM (Int, Int) () Int
+--     fibsSM = simpleSM (\(a, b) () -> ((b, a+b), a)) (0, 1)
+--     take 10 $ simpleSrc fibsSM
+--       [0,1,1,2,3, ...]simpleSrc :: SM s () a -> [a]
 simpleSrc sm = a:(simpleSrc sm')
   where
     (sm', a) = step sm ()
 
+-- Basic State Machines
+        
 -- | build a SM which just output its input
 idSM :: SM () a a
 idSM = newSM (\_ a -> (idSM, a)) ()
@@ -86,23 +100,6 @@ foldlDelaySM f s = newSM f' s
 
 -- High order functions
 
--- | absorb a SM and hide its storage.
-absorbRSM :: SM s0 a b -> SM s1 b c -> SM s0 a c
-absorbRSM (SM (TF f0) s0) (SM (TF f1) s1) = newSM (f2 f0 f1 s1) s0
-  where
-    f2 f0 f1 s1 s0 a = (newSM (f2 f0' f1' s1') s0', c)
-      where
-        (SM (TF f0') s0', b) = f0 s0 a
-        (SM (TF f1') s1', c) = f1 s1 b
-
-absorbLSM :: SM s0 a b -> SM s1 b c -> SM s1 a c
-absorbLSM (SM (TF f0) s0) (SM (TF f1) s1) = newSM (f2 f0 f1 s0) s1
-  where
-    f2 f0 f1 s0 s1 a = (newSM (f2 f0' f1' s0') s1', c)
-      where
-        (SM (TF f0') s0', b) = f0 s0 a
-        (SM (TF f1') s1', c) = f1 s1 b
-
 -- | absorb a function.
 --     absorbR sm f = absorbRSM sm (arrSM f)
 --     absorbL f sm = absorbLSM (arrSM f) sm
@@ -120,6 +117,10 @@ absorbL f0 (SM (TF f1) s) = newSM (f2 f1) s
       where
         (SM (TF f1') s', c) = f1 s (f0 a)
 
+(^>>>) = absorbL
+(>>>^) = absorbR
+(<<<^) = flip absorbL
+(^<<<) = flip absorbR
 
 -- Category instance
 
@@ -198,9 +199,48 @@ secondSM sm = absorb (\(c, a) -> a) (\(c, a) b -> (c, b)) sm
 
 -- ArrowChoice instance
 
--- ArrowApply
+leftSM :: SM s a b -> SM s (Either a c) (Either b c)
+leftSM (SM (TF f0) s) = newSM (f1 f0) s
+  where
+    f1 f0 s (Right c) = (newSM (f1 f0) s, Right c)
+    f1 f0 s (Left a) = (newSM (f1 f0') s', Left b)
+      where
+        (SM (TF f0') s', b) = f0 s a
+
+rightSM :: SM s a b -> SM s (Either c a) (Either c b)
+rightSM (SM (TF f0) s) = newSM (f1 f0) s
+  where
+    f1 f0 s (Left c) = (newSM (f1 f0) s, Left c)
+    f1 f0 s (Right a) = (newSM (f1 f0') s', Right b)
+      where
+        (SM (TF f0') s', b) = f0 s a
+
+sumSM :: SM s0 a b -> SM s1 c d -> SM (s0,s1) (Either a c) (Either b d)
+sumSM (SM (TF f0) s0) (SM (TF f1) s1) = newSM (f2 f0 f1) (s0, s1)
+  where
+    f2 f0 f1 (s0, s1) (Left a)  = let (SM (TF f0') s0', b) = f0 s0 a in (newSM (f2 f0' f1) (s0', s1), Left b)
+    f2 f0 f1 (s0, s1) (Right c) = let (SM (TF f1') s1', d) = f1 s1 c in (newSM (f2 f0 f1') (s0, s1'), Right d)
+
+faninSM :: SM s0 a c -> SM s1 b c -> SM (s0, s1) (Either a b) c
+faninSM (SM (TF f0) s0) (SM (TF f1) s1) = newSM (f2 f0 f1) (s0, s1)
+  where
+    f2 f0 f1 (s0, s1) (Left a)  = let (SM (TF f0') s0', c) = f0 s0 a in (newSM (f2 f0' f1) (s0', s1), c)
+    f2 f0 f1 (s0, s1) (Right b) = let (SM (TF f1') s1', c) = f1 s1 b in (newSM (f2 f0 f1') (s0, s1'), c)
+
+    
+(++++) = sumSM
+
+(||||) = faninSM
 
 -- ArrowLoop
+
+loopSM :: SM s (a, c) (b, c) -> SM s a b
+loopSM (SM (TF f0) s) = newSM (f1 f0) s
+  where
+    f1 f0 s a = (newSM (f1 f0') s', b)
+      where
+        (SM (TF f0') s', (b, c)) = f0 s (a, c)
+
 
 
 
@@ -227,10 +267,6 @@ concatSM = joinSM
 
 -- slowdownSM :: SM a [b] -> SM a (Event b)
 -- slowdownSM = undefined
-
-
-
-
 
 
 -- Evaluation

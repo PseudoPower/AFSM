@@ -44,6 +44,22 @@ hideStorage (SM (TF f) s) = newSMH (f1 f s)
       where
         (SM (TF f') s', b) = f s a
 
+-- | absorb a SM and hide its storage.
+absorbRSM :: SM s0 a b -> SM s1 b c -> SM s0 a c
+absorbRSM (SM (TF f0) s0) (SM (TF f1) s1) = newSM (f2 f0 f1 s1) s0
+  where
+    f2 f0 f1 s1 s0 a = (newSM (f2 f0' f1' s1') s0', c)
+      where
+        (SM (TF f0') s0', b) = f0 s0 a
+        (SM (TF f1') s1', c) = f1 s1 b
+
+absorbLSM :: SM s0 a b -> SM s1 b c -> SM s1 a c
+absorbLSM (SM (TF f0) s0) (SM (TF f1) s1) = newSM (f2 f0 f1 s0) s1
+  where
+    f2 f0 f1 s0 s1 a = (newSM (f2 f0' f1' s0') s1', c)
+      where
+        (SM (TF f0') s0', b) = f0 s0 a
+        (SM (TF f1') s1', c) = f1 s1 b
     
 -- Category instance
 

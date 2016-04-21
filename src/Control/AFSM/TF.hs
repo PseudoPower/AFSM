@@ -68,6 +68,63 @@ firstTF (TF f) = TF $ f1 f
         
 -- ArrowChoice
 
+instance ArrowChoice (TF s) where
+  left = leftTF
+  right = rightTF
+  (+++) = sumTF
+  (|||) = faninTF
+  
+leftTF :: TF s a b -> TF s (Either a c) (Either b c)
+leftTF (TF f0) = TF (f1 f0)
+  where
+    f1 f0 s (Right c) = (newSM (f1 f0) s, Right c)
+    f1 f0 s (Left a) = (newSM (f1 f0') s', Left b)
+      where
+        (SM (TF f0') s', b) = f0 s a
+        
+rightTF :: TF s a b -> TF s (Either c a) (Either c b)
+rightTF (TF f0) = TF (f1 f0)
+  where
+    f1 f0 s (Left c) = (newSM (f1 f0) s, Left c)
+    f1 f0 s (Right a) = (newSM (f1 f0') s', Right b)
+      where
+        (SM (TF f0') s', b) = f0 s a
+
+sumTF :: TF s a b -> TF s c d -> TF s (Either a c) (Either b d)
+sumTF (TF f0) (TF f1) = TF (f2 f0 f1)
+  where
+    f2 f0 f1 s (Left a)  = let (SM (TF f0') s', b) = f0 s a in (newSM (f2 f0' f1) s', Left b)
+    f2 f0 f1 s (Right c) = let (SM (TF f1') s', d) = f1 s c in (newSM (f2 f0 f1') s', Right d)
+
+faninTF :: TF s a c -> TF s b c -> TF s (Either a b) c
+faninTF (TF f0) (TF f1) = TF (f2 f0 f1)
+  where
+    f2 f0 f1 s (Left a)  = let (SM (TF f0') s', c) = f0 s a in (newSM (f2 f0' f1) s', c)
+    f2 f0 f1 s (Right b) = let (SM (TF f1') s', c) = f1 s b in (newSM (f2 f0 f1') s', c)
+    
 -- ArrowApply
 
+instance ArrowApply (TF s) where
+  app = appTF
+
+appTF :: TF s (TF s a b, a) b
+appTF = TF f
+  where
+    f s (TF f0, a) = (newSM f s', b)
+      where
+        (SM (TF f0') s', b) = f0 s a
+
+
 -- ArrowLoop
+
+instance ArrowLoop (TF s) where
+    loop = loopTF
+    
+loopTF :: TF s (a, c) (b, c) -> TF s a b
+loopTF (TF f0) = TF (f1 f0)
+  where
+    f1 f0 s a = (newSM (f1 f0') s, b)
+      where
+        (SM (TF f0') s', (b, c)) = f0 s (a, c)
+
+
