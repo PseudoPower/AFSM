@@ -122,9 +122,11 @@ But I prefer to think the pure function as the stateful function with state `()`
 
 ## Implementation
 
-The key idea is using the GADTs extension to hide the state(storage) type. If we do not use the GADTs extension, then `SM a b` will become `SM s a b` where `s` denotes the state(storage) type. However, after hiding the storage type, it is the same with `Circuit a b`. The funny thing is that we come from AFRP, and end up with Circuit.
+The key idea is using the GADTs extension to hide the state(storage) type. If we do not use the GADTs extension, then `SM a b` will become `SM s a b` where `s` denotes the state(storage) type. 
 
-We are planning to removing GADTs extension, then `SM a b` becomes `SM s a b`. The benefit is that we can extract the storage from a SM, and the limitation is that we cannot put itself as the storage or do something may cause infinite type. Also, when we put several SMs together, the type of storage will be in a mess. It's the reason we use GADTs to hide the type of storage before, but now we still have a way to hide the storage if you never want to extract it, `hideStorage :: SM s a b -> SM () a b`.
+However, after hiding the storage type, it is the same with `Circuit a b`. The funny thing is that we come from AFRP, and end up with Circuit.
+
+We are planning to remove GADTs extension, then `SM a b` becomes `SM s a b`. The benefit is that we can extract the storage from a SM, and the limitation is that we cannot put itself as the storage or do something may cause infinite type. Also, when we put several SMs together, the type of storage will be in a mess. It's the reason we use GADTs to hide the type of storage before, but now we still have a way to hide the storage if you never want to extract it, `hideStorage :: SM s a b -> SM () a b`.
 
 ## Examples
 
