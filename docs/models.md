@@ -80,7 +80,7 @@ Base on their own models, both `AFRP` and `AFSM` have the Event type.
 [Arrows and computation](http://ipaper.googlecode.com/git-history/243b02cb56424d9e3931361122c5aa1c4bdcbbbd/Arrow/arrows-fop.pdf)
   * the model in this chapter is named state transformers, I just call it `State` model.  The `Auto` model in this chapter is the same with `Circuit`.
   * Our professor points out that this chapter is very similiar with what we are doing. After reading, we realize that the `State` medol and our model are very different. But!!! we find that our model is almost the same with `Circuit` model!!!
-  * About the `State` model: 
+
 [Haskell/Arrow tutorial](https://en.wikibooks.org/wiki/Haskell/Arrow_tutorial)
   * the Arrow tutorial with `Circuit` model. Here is its definition, `newtype Circuit a b = Circuit (a -> (Circuit a b, b))`. 
   * It seems that `Circuit` doesn't have the storage. But that is easy to make it has the storage, and it is exactly what we are doing. `newStateCircuit f s = Circuit (f s)`, then the `newStateCircuit :: (s -> a -> (Circuit a b)) -> s -> Circuit a b` has the same function with what our constructor does.
