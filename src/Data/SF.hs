@@ -1,19 +1,23 @@
 -----------------------------------------------------------------------------
 -- |
--- Module      :  Control.AFSM.SF
+-- Module      :  Data.SF
 -- Copyright   :  (c) Hanzhong Xu, Meng Meng 2016,
 -- License     :  MIT License
 --
 -- Maintainer  :  hanzh.xu@gmail.com
 -- Stability   :  experimental
 -- Portability :  portable
+--
+-- Stateful functions
+--   It is the same with SMH, and it just removes the empty storage.
 -----------------------------------------------------------------------------
 
-module Control.AFSM.SF (
+module Data.SF (
   SF(..),
 ) where
 
 import Control.Category
 import Control.Arrow
 
-import Control.AFSM.SF.CoreType
+import Data.SF.CoreType
+import Data.SF.Core

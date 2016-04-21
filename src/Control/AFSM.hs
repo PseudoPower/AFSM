@@ -93,4 +93,4 @@ import Control.AFSM.Event
 import Control.AFSM.TF
 import Control.AFSM.SMFunctor
 import Control.AFSM.SMH
-import Control.AFSM.SF
+import Data.SF
