@@ -10,7 +10,7 @@ Now, the GADTs extension has been removed, and a lot of things should been clear
 
 `type SMH a b = SM () a b` is still an Arrow instance, and `hideStorage :: SM s a b -> SM () a b` can help you transform `SM s a b` to `SM () a b`, if you want to use the Arrow notation. The cost is that the information about storage is gone.
 
-`type SMState s a b = (s -> a -> (SM a b, b))` becomes `data TF = TF (s -> a -> (SM a b, b))`. The reason about this changing is that `type TF` is just defining an alias of an existing type. So it is not possible to define a instance for `TF`. We observed that  `(s -> a -> (SM a b, b))` is similiar with `ST monad`, and its behavior is also similiar with `ST monad`. I think it is a good chance to do something around.
+`type SMState s a b = (s -> a -> (SM a b, b))` becomes `data TF = TF (s -> a -> (SM a b, b))`. The reason about this changing is that `type SMState` is just defining an alias of an existing type, So it is not possible to define a instance for `SMState`. We observed that  `(s -> a -> (SM a b, b))` is similiar with `ST monad`, and its behavior is also similiar with `ST monad`. I think it is a good chance to do something around.
 
 Although our original idea is removing `Time` concept and adding `Storage` concept, now it is much closer with `Circuit` model or `State` model than `AFRP`. More precisely, it is a mixture of `Circuit` and `State`.
 
