@@ -76,7 +76,7 @@ data SM a b where
 --    c  \----------------/  d
 --
 --
--- (&&&) :: SM s a b -> SM t a c -> SM (s,t) a (b, c)
+-- (&&&&) :: SM s a b -> SM t a c -> SM (s,t) a (b, c)
 --
 --            /----------\  b
 --       /--->| SM s a b |>---\
