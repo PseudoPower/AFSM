@@ -13,8 +13,16 @@
 -----------------------------------------------------------------------------
 
 module Data.SF (
+  
   SF(..),
+  newSF,
+  simpleSF,
+  
   STF(..),
+  transSTF2SF,
+
+  SFunctor(..),
+  
 ) where
 
 import Control.Category
@@ -23,3 +31,4 @@ import Control.Arrow
 import Data.SF.CoreType
 import Data.SF.Core
 import Data.SF.STF
+import Data.SF.SFunctor

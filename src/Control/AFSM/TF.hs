@@ -40,19 +40,22 @@ idTF = TF f
     f s a = (newSM f s, a)
     
 composeTF :: TF s b c -> TF s a b -> TF s a c
-composeTF (TF f1) (TF f0) = TF $ f2 f0 f1
+composeTF (TF f1) (TF f0) = TF (f2 f0 f1)
   where
-    f2 f0 f1 s a = (newSM (f2 (tf sm0) (tf sm1)) (st sm1), c)
+    f2 f0 f1 s a = (newSM (f2 f0' f1') s'', c)
       where
-        (sm0, b) = f0 s a
-        (sm1, c) = f1 (st sm0) b
-        
+        (SM (TF f0') s', b) = f0 s a
+        (SM (TF f1') s'', c) = f1 s' b   
 
 -- Arrow instance
 
 instance Arrow (TF s) where
   arr = arrTF
   first = firstTF
+  second = secondTF
+  (***) = productTF
+  (&&&) = fanoutTF
+
   
 arrTF :: (a -> b) -> TF s a b
 arrTF f = TF f1
@@ -60,12 +63,35 @@ arrTF f = TF f1
     f1 s a = (newSM f1 s, f a)
 
 firstTF :: TF s a b -> TF s (a, c) (b, c)
-firstTF (TF f) = TF $ f1 f
+firstTF (TF f0) = TF (f1 f0)
   where
-    f1 f s (a, c) = (newSM (f1 (tf sm)) (st sm), (b, c))
+    f1 f0 s (a, c) = (newSM (f1 f0') s', (b, c))
       where
-        (sm, b) = f s a
+        (SM (TF f0') s', b) = f0 s a
 
+secondTF :: TF s a b -> TF s (c, a) (c, b)
+secondTF (TF f0) = TF (f1 f0)
+  where
+    f1 f0 s (c, a) = (newSM (f1 f0') s', (c, b))
+      where
+        (SM (TF f0') s', b) = f0 s a
+        
+
+productTF :: TF s a b -> TF s c d -> TF s (a, c) (b, d)
+productTF (TF f0) (TF f1) = TF (f2 f0 f1)
+  where
+    f2 f0 f1 s (a, c) = (newSM (f2 f0' f1') s'', (b, d))
+      where
+        (SM (TF f0') s', b) = f0 s a
+        (SM (TF f1') s'', d) = f1 s' c
+
+fanoutTF :: TF s a b -> TF s a c -> TF s a (b, c)
+fanoutTF (TF f0) (TF f1) = TF (f2 f0 f1)
+  where
+    f2 f0 f1 s a = (newSM (f2 f0' f1') s'', (b, c))
+      where
+        (SM (TF f0') s', b) = f0 s a
+        (SM (TF f1') s'', c) = f1 s' a
         
 -- ArrowChoice
 

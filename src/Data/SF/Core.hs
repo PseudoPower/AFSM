@@ -9,9 +9,7 @@
 -- Portability :  portable
 -----------------------------------------------------------------------------
 
-module Data.SF.Core (
-  
-) where
+module Data.SF.Core where
 
 import Control.Category
 import Control.Arrow

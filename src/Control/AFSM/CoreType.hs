@@ -26,7 +26,7 @@ module Control.AFSM.CoreType where
 newtype TF s a b = TF (s -> a -> (SM s a b, b))
 
 -- | STF is the type of simple transition function.
-type STF s a b = (s -> a -> (s, b))
+-- type STF s a b = (s -> a -> (s, b))
 
 -- | 'SM' is a type representing a state machine.
 --     (TF s a b): initial state(transition function), s: initial storage

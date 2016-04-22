@@ -9,10 +9,7 @@
 -- Portability :  portable
 -----------------------------------------------------------------------------
 
-module Data.SF.CoreType (
-  SF(..),
-  STF(..)
-)where
+module Data.SF.CoreType where
 
 data SF a b = SF (a -> (SF a b, b))
 
