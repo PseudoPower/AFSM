@@ -14,6 +14,7 @@
 
 module Data.SF (
   SF(..),
+  STF(..),
 ) where
 
 import Control.Category
@@ -21,3 +22,4 @@ import Control.Arrow
 
 import Data.SF.CoreType
 import Data.SF.Core
+import Data.SF.STF

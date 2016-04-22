@@ -15,7 +15,7 @@ module Control.AFSM.SMFunctor where
 
 -- import Prelude hiding ((.))
 -- import Data.Functor.
-import Data.Functor.Compose
+-- import Data.Functor.Compose
 import Control.Monad
 
 import Control.AFSM.CoreType
@@ -67,7 +67,8 @@ smexecSM (SM (TF f0) s0') = newSM (f1 f0) s0'
     f1 f0 s0 fa = (newSM (f1 f0') s0', fb)
       where 
       ((SM (TF f0') s0'), fb) = smexec (newSM f0 s0) fa
-    
+      
+{-
 -- Advanced functions
 
 smexecSMA :: SMFunctor f => SM s a b -> SM (SM s a b) (f a) (f b)
@@ -85,7 +86,7 @@ instance (SMFunctor f, SMFunctor g) => SMFunctor (Compose f g) where
       sm' = smexecSMA sm
       (sm'', fgb) = smexec sm' $ getCompose fga
       
-  
+-}  
       
 -- SMMonad
 
