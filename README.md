@@ -4,7 +4,7 @@ Because this readme file becomes so long, I moved other models to [models.md](do
 
 ## Update notes
 
-Honstly, I still love the idea about hiding the storage, so I add one more data type `data SF a b = SF (a -> (SF a b, b))` which represents stateful functions. It is the same with `SMH`, `Circuit` and `Auto`, but I love it, and just put it beside the state machines, :)
+Frankly, I still love the idea about hiding the storage, so I add one more data type `data SF a b = SF (a -> (SF a b, b))` which represents stateful functions. It is the same with `SMH`, `Circuit` and `Auto`, but I love it, and just put it beside the state machines, :)
 
 ## Introduction
 
