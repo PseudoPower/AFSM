@@ -114,21 +114,25 @@ But I prefer to think the pure function as the stateful function with state `()`
 
 ## Implementation
 
-There are two similar implementation now. One is keeping the storage type and is not an instance of arrow. The other one is hiding the storage type and is an instance of arrow. 
+There are two similar implementation now. One is keeping the storage type and is not an instance of arrow. The other one is hiding the storage type and is an instance of arrow.
 
 ### State machine
 
 `data SM s a b = SM (TF s a b) s`
-  * `hideStorage :: SM s a b -> SM () a b`
-  * `instance Arrow (SM ())`
+  * `newSM :: (s -> a -> (SM s a b, b)) -> s -> SM s a b`, and `simpleSM :: (s -> a -> (s, b)) -> s -> SM s a b`
+  * `instance Arrow (SM ())`, and `hideStorage :: SM s a b -> SM () a b`
+  * `class SMFunctor f`, and `smexec :: SM s a b -> f a -> (SM s a b, f b)`
 
 `data TF s a b = TF (s -> a -> (SM s a b, b))`
+  * `transSM2TF :: SM t (s, a) (s, b) -> TF s a b`
   * `instance Arrow TF`
 
 ### Statefull function
 
 `data SF a b = SF (a -> (SF a b, b))`
+  * `newSF :: (s -> a -> (SF a b, b)) -> s -> SF a b`, and `simpleSF :: (s -> a -> (s, b)) -> s -> SF a b`
   * `instance Arrow SF`
+  * `class SFunctor f` and `sfexec :: SF a b -> f a -> (SF a b, f b)`
 
 `data STF s a b = STF (s -> a -> ((STF s a b, s), b))`
   * `transSTF2SF :: STF s a b -> s -> SF a b` 
