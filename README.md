@@ -114,11 +114,25 @@ But I prefer to think the pure function as the stateful function with state `()`
 
 ## Implementation
 
-The key idea is using the GADTs extension to hide the state(storage) type. If we do not use the GADTs extension, then `SM a b` will become `SM s a b` where `s` denotes the state(storage) type. 
+There are two similar implementation now. One is keeping the storage type and is not an instance of arrow. The other one is hiding the storage type and is an instance of arrow. 
 
-However, after hiding the storage type, it is the same with `Circuit a b`. The funny thing is that we come from AFRP, and end up with Circuit.
+### State machine
 
-We are planning to remove GADTs extension, then `SM a b` becomes `SM s a b`. The benefit is that we can extract the storage from a SM, and the limitation is that we cannot put itself as the storage or do something may cause infinite type. Also, when we put several SMs together, the type of storage will be in a mess. It's the reason we use GADTs to hide the type of storage before, but now we still have a way to hide the storage if you never want to extract it, `hideStorage :: SM s a b -> SM () a b`.
+`data SM s a b = SM (TF s a b) s`
+  * `hideStorage :: SM s a b -> SM () a b`
+  * `instance Arrow (SM ())`
+
+`data TF s a b = TF (s -> a -> (SM s a b, b))`
+  * `instance Arrow TF`
+
+### Statefull function
+
+`data SF a b = SF (a -> (SF a b, b))`
+  * `instance Arrow SF`
+
+`data STF s a b = STF (s -> a -> ((STF s a b, s), b))`
+  * `transSTF2SF :: STF s a b -> s -> SF a b` 
+  * `instance Arrow STF`
 
 ## Examples
 
