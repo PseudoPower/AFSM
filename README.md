@@ -127,7 +127,7 @@ There are two similar implementation now. One is keeping the storage type and is
   * `transSM2TF :: SM t (s, a) (s, b) -> TF s a b`
   * `instance Arrow TF`
 
-### Statefull function
+### Stateful function
 
 `data SF a b = SF (a -> (SF a b, b))`
   * `newSF :: (s -> a -> (SF a b, b)) -> s -> SF a b`, and `simpleSF :: (s -> a -> (s, b)) -> s -> SF a b`
