@@ -146,7 +146,7 @@ It shows basic components of AFSM. And an example about operating stacks.
 
 ### Toys([Toys.hs](https://github.com/PseudoPower/AFSM/blob/master/examples/SM/Toys.hs))
 
-***A collection of toys***
+**A collection of toys**
 
 The Fibonacci sequence
 
