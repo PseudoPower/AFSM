@@ -2,9 +2,9 @@ name:                AFSM
 version:             0.1.3.1
 synopsis:            Arrowized functional state machines
 description: Arrowized functional state machines.
-             This module is inspired by Yampa and the paper 
+             This module is inspired by Yampa and the paper
              /Functional Reactive Programming, Continued*/ written by
-             Henrik Nilsson, Antony Courtney and John Peterson.        
+             Henrik Nilsson, Antony Courtney and John Peterson.
 homepage:            https://github.com/PseudoPower/AFSM
 license:             MIT
 license-file:        LICENSE
@@ -13,12 +13,12 @@ maintainer:          hanzh.xu@gmail.com
 copyright:           Hanzhong Xu, Meng Meng
 category:            FRP
 build-type:          Simple
-extra-source-files:  
+extra-source-files:
   README.md
   CHANGELOG.md
-  examples/HelloWorld.hs
-  examples/RPN.hs
-  examples/Toys.hs
+  examples/SM/HelloWorld.hs
+  examples/SM/RPN.hs
+  examples/SM/Toys.hs
 cabal-version:       >=1.10
 library
   exposed-modules:
@@ -33,7 +33,7 @@ library
     Data.SF
     Data.SF.Core
     Data.SF.CoreType
-  -- other-modules:       
+  -- other-modules:
   other-extensions:    Arrows, FlexibleInstances
   build-depends:       base >= 4.7 && < 5
   ghc-options:         -Wall

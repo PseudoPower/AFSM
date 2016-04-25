@@ -7,7 +7,7 @@
 ```
 {-# LANGUAGE PartialTypeSignatures #-}
 
-f :: Int -> _ 
+f :: Int -> _
 f x = x + 1
 ```
 
@@ -17,8 +17,8 @@ I tried to print the SM as the circuit diagram. Drawing wires to connect two SMs
 
 This part is easy:
 ```
->-----+ 
->---+ | 
+>-----+
+>---+ |
 >-+ | +->
   | |   
   | +--->
@@ -37,10 +37,10 @@ twoSM :: SM () a (a,a)
 
 aSM :: SM () (Int,Int) (Int, Int)
 
-bSM = aSM >>> (idSM &&& rwoSM)
+bSM = aSM >>> (idSM &&& twoSM)
 ```
 
-We should be able to figure out that the size of `a` is two. So it depeneds on hwo to connect SMs, and it is what the HM system does.
+We should be able to figure out that the size of `a` is two. So it depends on how to connect SMs, and it is what the HM system does.
 
 
 ## References

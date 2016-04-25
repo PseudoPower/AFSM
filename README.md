@@ -36,10 +36,10 @@ data SM a b where
 --  >--->| SM s a b |>--->
 --       \----------/
 --
--- Here is a slight difference from Arrow class, 
---   so `SM s a b` is not an instance of Arrow class, 
+-- Here is a slight difference from Arrow class,
+--   so `SM s a b` is not an instance of Arrow class,
 --   but you can do everything the same as an Arrow instance.
--- And `SM () a b` is still an instance of Arrow, 
+-- And `SM () a b` is still an instance of Arrow,
 --   and `hideStorage :: SM s a b -> SM () a b` can help you to achieve easily.
 -- It is a trade-off between keeping track the storage and having the instance of Arrow.
 --
@@ -79,10 +79,10 @@ data SM a b where
 --            \----------/
 --
 
--- execute SM s a b with inputs, 
---   you can think `SM s a b` is a stateful function `f :: a -> b` with storage `s`. 
---   `step` is the apply function. `exec` is the mapping function. 
--- We also introduce our own Functor class, `SMFunctor`. 
+-- execute SM s a b with inputs,
+--   you can think `SM s a b` is a stateful function `f :: a -> b` with storage `s`.
+--   `step` is the apply function. `exec` is the mapping function.
+-- We also introduce our own Functor class, `SMFunctor`.
 --   And `smexec :: SMFunctor f => SM s a b -> f a -> (SM s a b, f b)`.
 
 step :: SM s a b -> a -> (SM s a b, b)
@@ -96,7 +96,7 @@ From a theoretical point of view, this model is a simplified version of FRP, but
 
 From an engnieering point of view, the other difference from AFRP(Yampa) is that we provide the constructor to use the transition function `TF s a b :: s -> a -> (SM s a b, b)` to build `SM s a b` directly where `s` donates the storage type.
 
-### Simplifed model
+### Simplified model
 
 In functional reactive programming(FRP), the key concepts are the signal, `Signal a :: Time -> a`, and the signal function from signal to signal, `SF a b :: Signal a -> Signal b`.
 
@@ -135,7 +135,7 @@ There are two similar implementation now. One is keeping the storage type and is
   * `class SFunctor f` and `sfexec :: SF a b -> f a -> (SF a b, f b)`
 
 `data STF s a b = STF (s -> a -> ((STF s a b, s), b))`
-  * `transSTF2SF :: STF s a b -> s -> SF a b` 
+  * `transSTF2SF :: STF s a b -> s -> SF a b`
   * `instance Arrow STF`
 
 ## Examples
@@ -158,7 +158,7 @@ The prime number sequence
 
 To run this example, just type `make RPN` or `ghci examples/RPN.hs -isrc/`. The makefile will be maintained for all examples. Then you can run `main` function and type some infix expressions, such as  `3 * (2 - 3) + (4 - 2 * 3), 3 + 4 * 2 / (1 - 5) * 2 + 3`.
 
-It is also known as postfix notation, and it is very straightforward example. The input is the infix expression, and the output is the value. First, we build a SM named in2post to convert infix notation to postfix expression. Then we build a SM named post2ret to evaluate the valus. Finally, we use them to compose `in2ret = in2post >>> post2ret`.
+It is also known as postfix notation, and it is very straightforward example. The input is the infix expression, and the output is the value. First, we build a SM named in2post to convert infix notation to postfix expression. Then we build a SM named post2ret to evaluate the values. Finally, we use them to compose `in2ret = in2post >>> post2ret`.
 
 
 
