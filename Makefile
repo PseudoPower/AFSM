@@ -1,5 +1,5 @@
 RPN :
-	ghci examples/RPN.hs -isrc/
+	ghci examples/SM/RPN.hs -isrc/
 
 Toys :
-		ghci examples/Toys.hs -isrc/
+		ghci examples/SM/Toys.hs -isrc/

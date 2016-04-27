@@ -16,6 +16,17 @@ import Control.Arrow
 
 import Data.SF.CoreType
 
+buildSrc :: SF a a -> [a]
+buildSrc (SF f) = a : (buildSrc sf')
+  where
+    (sf', a) = f a
+    
+simpleSrc :: SF () a -> [a]
+simpleSrc (SF f) = a : (simpleSrc sf')
+  where
+    (sf', a) = f ()
+
+
 -- Category instance
 
 instance Category SF where

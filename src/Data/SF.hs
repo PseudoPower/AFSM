@@ -21,6 +21,11 @@ module Data.SF (
   STF(..),
   transSTF2SF,
   transSF2STF,
+  
+  buildSrc,
+  simpleSrc,
+  
+  arrSF,
 
   SFunctor(..),
   
