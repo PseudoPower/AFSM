@@ -33,3 +33,10 @@ transSTF2SF (STF f) s = SF (f1 f s)
     f1 f s a = (SF (f1 f' s'), b)
       where
         ((STF f', s'), b) = f s a
+        
+transSF2STF :: SF (s, a) (s, b) -> STF s a b
+transSF2STF (SF f) = STF (f1 f)
+  where
+    f1 f s a = ((STF $ f1 f', s'), b)
+      where
+        (SF f', (s', b)) = f (s, a)

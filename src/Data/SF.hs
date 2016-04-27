@@ -20,6 +20,7 @@ module Data.SF (
   
   STF(..),
   transSTF2SF,
+  transSF2STF,
 
   SFunctor(..),
   

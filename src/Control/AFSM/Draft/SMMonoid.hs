@@ -36,7 +36,7 @@ instance SMMonoid () where
   smid _ _ = ()
   smappend _ _ _= ()
   
--- smepty
+-- smempty
 -- 1 idSMM
 -- 2 arrSMM
 
