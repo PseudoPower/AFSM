@@ -11,7 +11,7 @@
 
 module Data.SF.CoreType where
 
-data SF a b = SF (a -> (SF a b, b))
+newtype SF a b = SF (a -> (SF a b, b))
 
 -- | the constructor with storage
 newSF :: (s -> a -> (SF a b, b)) -> s -> SF a b
@@ -25,7 +25,7 @@ simpleSF f s = SF (f1 f s)
       where
         (s', b) = f s a
         
-data STF s a b = STF (s -> a -> ((STF s a b, s), b))
+newtype STF s a b = STF (s -> a -> ((STF s a b, s), b))
 
 transSTF2SF :: STF s a b -> s -> SF a b
 transSTF2SF (STF f) s = SF (f1 f s)

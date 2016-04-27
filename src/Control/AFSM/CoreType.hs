@@ -31,7 +31,7 @@ newtype TF s a b = TF (s -> a -> (SM s a b, b))
 -- | 'SM' is a type representing a state machine.
 --     (TF s a b): initial state(transition function), s: initial storage
 --     SM storage input output = SM (TF storage input output) storage
-data SM s a b = SM (TF s a b) s
+newtype SM s a b = SM (TF s a b) s
 
 tf :: SM s a b -> (s -> a -> (SM s a b, b))
 {-# INLINE tf #-}
@@ -76,4 +76,9 @@ instance (Show s) => Show (SM s a b) where
 type SMH a b = SM () a b
 
 -- | 'Event' type, there are 4 different events: event a, no event, error event string and exit event.
-data Event a = Event a | NoEvent | ErrEvent String | ExitEvent deriving (Show, Eq, Ord)
+data Event a 
+  = Event a 
+  | NoEvent 
+  | ErrEvent String 
+  | ExitEvent 
+  deriving (Show, Eq, Ord)

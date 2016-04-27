@@ -38,6 +38,7 @@ ourfibs = simpleSrc fibsSM
 -------------------
 -- Random Source --
 -------------------
+
 {-
 randSM :: StdGen -> SM StdGen () Int
 randSM = simpleSM (\g () -> swap $ next g)
@@ -47,6 +48,7 @@ randSrc = simpleSrc.randSM.mkStdGen
 
 randSamples = take 5 $ randSrc 111
 -}
+
 -------------------
 -- Prime Numbers --
 -------------------
