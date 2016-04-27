@@ -9,6 +9,8 @@
 -- Portability :  portable
 -----------------------------------------------------------------------------
 
+{-# LANGUAGE BangPatterns #-}
+
 module Data.SF.Core where
 
 import Control.Category
@@ -55,38 +57,38 @@ instance Arrow SF where
   (&&&) = fanoutSF
 
 arrSF :: (a -> b) -> SF a b
-arrSF f = SF (\a ->(arrSF f, f a))
+arrSF !f = SF (\a ->(arrSF f, f a))
 
 firstSF :: SF a b -> SF (a, c) (b, c)
-firstSF (SF f) = SF (f1 f)
+firstSF (SF !f) = SF (f1 f)
   where
-    f1 f (a, c) = (SF (f1 f'), (b, c))
+    f1 !f (a, c) = (SF (f1 f'), (b, c))
       where
-        (SF f', b) = f a
+        (SF !f', b) = f a
 
 
 secondSF :: SF a b -> SF (c, a) (c, b)
-secondSF (SF f) = SF (f1 f)
+secondSF (SF !f) = SF (f1 f)
   where
-    f1 f (c, a) = (SF (f1 f'), (c, b))
+    f1 !f (c, a) = (SF (f1 f'), (c, b))
       where
-        (SF f', b) = f a
+        (SF !f', b) = f a
 
 productSF :: SF a b -> SF c d -> SF (a, c) (b, d)
-productSF (SF f0) (SF f1) = SF (f2 f0 f1)
+productSF (SF !f0) (SF !f1) = SF (f2 f0 f1)
   where
-    f2 f0 f1 (a, c) = (SF (f2 f0' f1'), (b, d))
+    f2 !f0 !f1 (a, c) = (SF (f2 f0' f1'), (b, d))
       where
-        (SF f0', b) = f0 a
-        (SF f1', d) = f1 c
+        (SF !f0', b) = f0 a
+        (SF !f1', d) = f1 c
 
 fanoutSF :: SF a b -> SF a c -> SF a (b, c)
-fanoutSF (SF f0) (SF f1) = SF (f2 f0 f1)
+fanoutSF (SF !f0) (SF !f1) = SF (f2 f0 f1)
   where
-    f2 f0 f1 a = (SF (f2 f0' f1'), (b, c))
+    f2 !f0 !f1 a = (SF (f2 f0' f1'), (b, c))
       where
-        (SF f0', b) = f0 a
-        (SF f1', c) = f1 a
+        (SF !f0', b) = f0 a
+        (SF !f1', c) = f1 a
 
 
 
