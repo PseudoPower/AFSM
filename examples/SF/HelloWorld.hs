@@ -117,6 +117,7 @@ sf s (Push a) =  pushStk s a
 sf s Pop = popStk s
 sf s Max =  maxStk s
 
+-- |
 -- >>> sfmap maxSF [Push 5, Push 3, Push 2, Max, Push 7, Max, Pop, Max]
 -- [5,3,2,5,7,7,7,5]
 maxSF :: SF StackOP Int
