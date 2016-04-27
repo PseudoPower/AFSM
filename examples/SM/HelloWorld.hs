@@ -69,19 +69,25 @@ mergeOutSM :: SM () (Int, Int) Int
 mergeOutSM = arrSM (\(a,b)->a+b)
 
 
--- example 3
-data StackOP = Push Int
-             | Pop
-             | Max
-             deriving Show
-             
+-- | A stack with three operations, push, pop and return the maximum integer in the stack.  
+data StackOP 
+  = Push Int
+  | Pop
+  | Max
+  deriving Show
+  
+{-
 
+-- | A naive implementation, and the max operation takes O(n) running time.
+pushStk :: [Int] -> Int -> ([Int], Int)
 pushStk [] a = ([a], a)
 pushStk s  a = (a:s, a)
 
+popStk :: [Int] -> ([Int], Int)
 popStk [] = ([], 0)
 popStk (x:xs)  = (xs, x)
 
+maxStk :: [Int] -> ([Int], Int)
 maxStk [] =  ([], 0) 
 maxStk s  = (s, maxList s)  
              
@@ -90,20 +96,25 @@ maxList [] = 0
 maxList (x:xs) = max x (maxList xs) 
 
 initial = []
-             
-{-
+
+-}           
+
+-- | A better implementation, and the max operation takes O(1) running time. And we use one more stack to maintain the maximum value.
+pushStk :: ([Int], [Int]) -> Int -> (([Int], [Int]), Int)
 pushStk ([],[]) a = (([a],[a]), a)
 pushStk ((x:xs), (y:ys))  a = if a >= y then ((a:x:xs, a:y:ys), a) else ((a:x:xs, y:ys), a)
 
+popStk :: ([Int], [Int]) -> (([Int], [Int]), Int)
 popStk ([],[]) = (([],[]), 0)
 popStk ((x:xs), (y:ys)) = if x == y then ((xs, ys), x) else ((xs, y:ys), x)
 
+maxStk :: ([Int], [Int]) -> (([Int], [Int]), Int)
 maxStk ([], [])  =  (([], []), 0) 
 maxStk ((x:xs), (y:ys)) = (((x:xs), (y:ys)), y)  
 
 initial = ([],[])
--}
 
+-- | switching the alogrithm without touching the code outside.
 sf s (Push a) =  pushStk s a
 sf s Pop = popStk s
 sf s Max =  maxStk s
@@ -116,7 +127,7 @@ sf s Max =  maxStk s
 --   Personaly, I prefer to use the third one, 
 --     because the input type and output type are decidable.
 -- >>> smfmap maxSM [Push 5, Push 3, Push 2, Max, Push 7, Max, Pop, Max]
--- [5,3,2,5,7,7,7,5]  
+-- [5,3,2,5,7,7,7,5]
 maxSM :: SM _ StackOP Int
 maxSM = simpleSM sf initial 
 
