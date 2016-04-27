@@ -47,7 +47,8 @@ buildSrc sm = a:(buildSrc sm')
 --     fibsSM :: SM (Int, Int) () Int
 --     fibsSM = simpleSM (\(a, b) () -> ((b, a+b), a)) (0, 1)
 --     take 10 $ simpleSrc fibsSM
---       [0,1,1,2,3, ...]simpleSrc :: SM s () a -> [a]
+--       [0,1,1,2,3, ...]
+simpleSrc :: SM s () a -> [a]
 simpleSrc sm = a:(simpleSrc sm')
   where
     (sm', a) = step sm ()
