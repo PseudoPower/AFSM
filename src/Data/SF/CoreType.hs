@@ -15,6 +15,7 @@ newtype SF a b = SF (a -> (SF a b, b))
 
 -- | the constructor with storage
 newSF :: (s -> a -> (SF a b, b)) -> s -> SF a b
+{-# INLINE newSF #-}
 newSF f s = SF (f s)
 
 -- | the simple constructor
@@ -40,3 +41,8 @@ transSF2STF (SF f) = STF (f1 f)
     f1 f s a = ((STF $ f1 f', s'), b)
       where
         (SF f', (s', b)) = f (s, a)
+        
+data Event a 
+  = Event a 
+  | NoEvent 
+  deriving (Show, Eq, Ord)

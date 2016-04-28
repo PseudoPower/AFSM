@@ -25,9 +25,22 @@ module Data.SF (
   buildSrc,
   simpleSrc,
   
+  idSF,
   arrSF,
+  constSF,
+  delaySF,
+  foldlSF,
+  foldlDelaySF,
+  
+  Event(..),
+  holdSF,
+  dropSF,
+  filterSF,
 
-  SFunctor(..),
+  FunctorSF(..),
+  (>>>=), (=<<<),
+  execSF,
+  bindSF,
   
 ) where
 
@@ -37,4 +50,4 @@ import Control.Arrow
 import Data.SF.CoreType
 import Data.SF.Core
 import Data.SF.STF
-import Data.SF.SFunctor
+import Data.SF.FunctorSF

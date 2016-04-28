@@ -18,6 +18,8 @@ import Control.Arrow
 
 import Data.SF.CoreType
 
+-- | Source
+
 buildSrc :: SF a a -> [a]
 buildSrc (SF f) = a : (buildSrc sf')
   where
@@ -29,6 +31,53 @@ simpleSrc (SF f) = a : (simpleSrc sf')
     (sf', a) = f ()
 
 
+-- | Basic SF    
+
+constSF :: b -> SF a b
+constSF b = SF (\a -> (constSF b, b))
+
+delaySF :: a -> SF a a
+delaySF a = newSF f a
+  where
+    f s' a' = ((newSF f a'), s')
+
+foldlSF :: (s -> a -> s) -> s -> SF a s
+foldlSF f s = newSF f' s
+  where
+    f' s' a' = (newSF f' s'', s'')
+      where
+        s'' = f s' a'
+
+foldlDelaySF :: (s -> a -> s) -> s -> SF a s
+foldlDelaySF f s = newSF f' s
+  where
+    f' s' a' = (newSF f' s'', s')
+      where
+        s'' = f s' a'
+
+        
+-- | Event SF
+
+holdSF :: a -> SF (Event a) a
+holdSF a = newSF f a
+  where
+    f a NoEvent = (newSF f a, a)
+    f a (Event a') = (newSF f a', a')
+    
+dropSF :: Eq a => SF a (Event a)
+dropSF = newSF f NoEvent
+  where
+    f NoEvent a = (newSF f (Event a), Event a)
+    f (Event a) a' = if a == a' then (newSF f (Event a), NoEvent) else (newSF f (Event a'), Event a')
+
+filterSF :: (a -> Bool) -> SF a (Event a)
+filterSF chk = newSF f chk
+  where
+    f chk a = (newSF f chk, if chk a then Event a else NoEvent)
+
+
+
+    
 -- Category instance
 
 instance Category SF where
