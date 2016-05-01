@@ -18,6 +18,7 @@ import Control.Arrow
 import Control.Monad
 
 import Control.Concurrent
+import Control.Concurrent.MVar
 import Control.Concurrent.STM
 import Control.Concurrent.STM.TChan
 import Data.IORef
