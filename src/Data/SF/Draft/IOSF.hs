@@ -43,7 +43,7 @@ runIOSF (IOSF sf o) a = do
 -}
 
 writeList2TChan :: TChan a -> [a] -> IO ()
-writeList2TChan ch ls = atomically $ sequence_ (map (writeTChan ch) ls)
+writeList2TChan ch ls = sequence_ (map (\x -> atomically $ writeTChan ch x) ls)
 
 outputTChan :: TChan a -> (a -> IO ()) -> IO ()
 outputTChan ch f = do
