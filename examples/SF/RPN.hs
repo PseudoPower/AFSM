@@ -174,7 +174,17 @@ main = do
   tc <- newBroadcastTChanIO
   tf <- newThreadSF in2ret
   ret <- tf tc
-  forM_ (parseStr s) (\t -> do (putStrLn.show) t; atomically $ writeTChan tc t; tryOutputTChan ret (putStrLn.show))
+  -- forM_ (parseStr s) (\t -> do (putStrLn.show) t; atomically $ writeTChan tc t; tryOutputTChan ret (putStrLn.show))
+  forkIO $ outputTChan ret 
+    (\x -> 
+      case x of 
+        (Just a) -> putStrLn $ show a
+        Nothing -> return ()
+    )
+
+  sequence_ (map (\t -> do atomically $ writeTChan tc t;) (parseStr s))
   
+  -- forM_ test1 (\t -> do (putStrLn.show) t; atomically $ writeTChan tc t; tryOutputTChan ret (putStrLn.show))
+  -- writeList2TChan tc test1
 -- input samples
 -- 3 * (2 - 3) + (4 - 2 * 3), 3 + 4 * 2 / (1 - 5) * 2 + 3

@@ -57,7 +57,7 @@ tryOutputTChan ch f = do
   mych <- atomically $ dupTChan ch
   ret <- atomically $ tryReadTChan mych
   case ret of
-    Nothing -> return ()
+    Nothing -> putStrLn "oops Nothing"
     Just a -> f a
     
 data IOSF a b = forall t. Foldable t => IOSF (IORef (SF a (t b))) (b -> IO ())
@@ -85,9 +85,9 @@ type ThreadSF a b = (TChan a) -> IO (TChan b)
 fromTChanSF :: TChanSF a b -> ThreadSF a b
 fromTChanSF (TChanSF sf tb) ta = do
   myta <- atomically $ dupTChan ta
-  forkIO $ forever $ do
+  (forkIO $ forever $ do
     a <- atomically $ readTChan myta
-    runIOSF sf a
+    runIOSF sf a)
   return tb
 
 newThreadSF :: Foldable t => SF a (t b) -> IO (ThreadSF a b)
