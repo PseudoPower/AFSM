@@ -6,6 +6,10 @@ Because this readme file becomes so long, I moved other models to [models.md](do
 
 Frankly, I still love the idea about hiding the storage, so I add one more data type `data SF a b = SF (a -> (SF a b, b))` which represents stateful functions. It is the same with `SMH`, `Circuit` and `Auto`, but I love it, and just put it beside the state machines, :)
 
+I find a more abstractive thing, [Automaton](https://hackage.haskell.org/package/arrows-0.4.4.1/docs/Control-Arrow-Transformer-Automaton.html). But I want to make it less abstactive, and easier to use. So I add a interesting data type `data SFM m a b = forall m. (Monad m) => SFM (a -> m (SFM m a b, b))`. Now, the pure and impure worlds are merged.
+
+There is another thing `IOSF` which is inspired by `asym` keyword. I haven't figure out which one is the right abstaction, so it may be rewritten in future. Briefly, now it is `type ThreadSF a b = (TChan a) -> IO (TChan b)`.
+
 ## Introduction
 
 The intuitive way to understand the state machine is that it have four parts, state, storage, input and output. Each state has its own transition function which takes the storage and the input, updates the storage and the state, and gives the output.
