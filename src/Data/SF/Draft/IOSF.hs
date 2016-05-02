@@ -24,6 +24,7 @@ import Control.Concurrent.STM.TChan
 import Data.IORef
 
 import Data.SF.CoreType
+
 {-
 data IOSF a b = IOSF {
   refsf :: IORef (SF a (Event b)),
@@ -80,7 +81,7 @@ newTChanSF sf = do
   s <- newIORef sf
   return $ TChanSF (IOSF s (\b -> atomically $ writeTChan o b)) o
 
-  
+
 type ThreadSF a b = (TChan a) -> IO (TChan b)
 
 fromTChanSF :: TChanSF a b -> ThreadSF a b
