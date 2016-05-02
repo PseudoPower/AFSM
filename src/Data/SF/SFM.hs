@@ -20,13 +20,11 @@ import Control.Monad
 -- data SFM m a b = forall m. (Monad m) => SFM (a -> m (SFM m a b, b))
 newtype SFM m a b = SFM (a -> m (SFM m a b, b))
 
-newSFM :: (Monad m) => (s -> a -> m (SFM m a b, b)) -> m s -> m (SFM m a b)
-newSFM f ms = do
-  s <- ms
-  return (SFM (f s))
+newSFM :: (Monad m) => (s -> a -> m (SFM m a b, b)) -> s -> m (SFM m a b)
+newSFM f s = return (SFM (f s))
 
-simpleSFM :: (Monad m) => (s -> a -> m (s, b)) -> m s -> m (SFM m a b)
-simpleSFM f0 ms = ms >>= (\s -> return (SFM (f1 f0 s)))
+simpleSFM :: (Monad m) => (s -> a -> m (s, b)) -> s -> m (SFM m a b)
+simpleSFM f0 s = return (SFM (f1 f0 s))
   where
     f1 f0 s a = do
       (s', b) <- (f0 s a)
