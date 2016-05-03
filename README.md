@@ -8,7 +8,7 @@ Frankly, I still love the idea about hiding the storage, so I add one more data 
 
 I find a more abstractive thing, [Automaton](https://hackage.haskell.org/package/arrows-0.4.4.1/docs/Control-Arrow-Transformer-Automaton.html). But I want to make it less abstactive, and easier to use. So I add a interesting data type `data SFM m a b = forall m. (Monad m) => SFM (a -> m (SFM m a b, b))`. Now, the pure and impure worlds are merged.
 
-There is another thing `IOSF` which is inspired by the keyword `asym` in Elm. But I don't know much about the concurrent FRP, so I haven't figure out which one is the right abstaction, and it may be rewritten in future. Briefly, now it is `type ThreadSF a b = (TChan a) -> IO (TChan b)`.
+There is another thing `IOSF` which is inspired by the keyword `asym` in Elm. But I don't know much about the concurrent FRP, so I haven't figure out which one is the right abstaction, and it may be rewritten in future. Briefly, now it is `type ThreadSF a b = (TChan a) -> IO (TChan b)`, and the constructor is `newThreadSF :: Foldable t => SF a (t b) -> IO (ThreadSF a b)`.
 
 ## Introduction
 
