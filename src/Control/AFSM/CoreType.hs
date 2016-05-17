@@ -31,7 +31,7 @@ newtype TF s a b = TF (s -> a -> (SM s a b, b))
 -- | 'SM' is a type representing a state machine.
 --     (TF s a b): initial state(transition function), s: initial storage
 --     SM storage input output = SM (TF storage input output) storage
-newtype SM s a b = SM (TF s a b) s
+data SM s a b = SM (TF s a b) s
 
 tf :: SM s a b -> (s -> a -> (SM s a b, b))
 {-# INLINE tf #-}

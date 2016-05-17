@@ -15,7 +15,7 @@ import Control.Arrow
 import Control.Monad
 
 import Data.SF
-import Data.SF.Draft.IOSF
+import Data.SF.IOSF
 import Data.Maybe
 
 import Control.Concurrent

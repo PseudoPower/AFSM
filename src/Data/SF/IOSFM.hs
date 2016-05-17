@@ -68,7 +68,7 @@ fromTChanSFM (TChanSFM sf tb) ta = do
     runIOSFM sf a)
   return tb
 
-newThreadSF :: Foldable t => SFM IO a (t b) -> IO (ThreadSF a b)
-newThreadSF sf = do
+sfm2ThreadSF :: Foldable t => SFM IO a (t b) -> IO (ThreadSF a b)
+sfm2ThreadSF sf = do
   tsf <- newTChanSFM sf
   return $ fromTChanSFM tsf

@@ -33,9 +33,6 @@ simpleSFM f0 s = return (SFM (f1 f0 s))
 -- newtype STFM m s a b = STFM (s -> a -> m ((STFM m s a b, s), b))
 
 
-
-
-
 simpleSrcM :: (Monad m) => SFM m () a -> m [a]
 simpleSrcM (SFM f) = do
   (sfm, a) <- f ()
