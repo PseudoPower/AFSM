@@ -75,7 +75,7 @@ blue = V4 0 0 maxBound maxBound
 
 timerCallback :: TChan Int -> Word32 -> IO SDL.Time.RetriggerTimer
 timerCallback ch interval = do
-  atomically $ writeTChan ch $ (read.show) interval
+  atomically $ writeTChan ch $ fromIntegral interval
   return $ SDL.Time.Reschedule 1000
 
 renderOutput :: SDL.Renderer -> (Int, Int, Int) -> IO ()
@@ -86,13 +86,13 @@ renderOutput renderer (h,m,s) = do
   SDL.drawRect renderer (Just (SDL.Rectangle (P (V2 200 100)) (V2 400 400)))
   let x = 400; 
       y = 300; 
-      a = (1.0 - (read (show s)::Float) / (30.0)) * pi; 
+      a = (1 - fromIntegral s / 30) * pi; 
       xs = x + round (200 * (sin a)); 
       ys = y + round (200 * (cos a));
-      b = (1.0 - (read (show m)::Float) / (30.0)) * pi; 
+      b = (1 - fromIntegral m / 30) * pi; 
       xm = x + round (150 * (sin b)); 
       ym = y + round (150 * (cos b));
-      c = (1.0 - (read (show h)::Float) / (6.0)) * pi; 
+      c = (1 - fromIntegral h / 6 - fromIntegral m / 360) * pi; 
       xh = x + round (100 * (sin c)); 
       yh = y + round (100 * (cos c));
   putStrLn $ show (h,m,s)
@@ -102,22 +102,22 @@ renderOutput renderer (h,m,s) = do
   SDL.drawLine renderer (P (V2 x y)) (P (V2 xm ym))
   SDL.rendererDrawColor renderer $= blue
   SDL.drawLine renderer (P (V2 x y)) (P (V2 xh yh))
---  
   SDL.present renderer    
 
 main :: IO ()
 main = do
+  SDL.initializeAll
+  window <- SDL.createWindow "Clock" SDL.defaultWindow { SDL.windowInitialSize = V2 800 600 }
+  renderer <- SDL.createRenderer window (-1) SDL.defaultRenderer
+  
   time <- getCurrentTime
+  putStrLn $ show time
   let t = (floor $ toRational $ utctDayTime time);
-      hour = mod ((div t 7200) + 2) 12;
+      hour = mod ((div t 3600) + 17) 12;
       minute = div (mod t 3600) 60;
       second = mod t 60;
       now = (hour, minute, second);
-  SDL.initializeAll
-  window <- SDL.createWindow "Clock" SDL.defaultWindow { SDL.windowInitialSize = V2 800 600 }
-  SDL.showWindow window
-  renderer <- SDL.createRenderer window (-1) SDL.defaultRenderer
-  renderOutput renderer now
+  
   tc <- newBroadcastTChanIO
   clock <- newThreadSF $ clockSF now
   (tids, ret) <- clock tc
@@ -136,6 +136,9 @@ main = do
                      | otherwise -> mempty
               _ -> mempty) $ map SDL.eventPayload events
       unless quit $ loop)
+      
+  renderOutput renderer now
+  SDL.showWindow window
   loop
   
   forM_ tids killThread
