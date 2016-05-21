@@ -11,15 +11,16 @@
 
 module Data.AFSM.SF.CoreType where
 
-import Data.Coerce
+-- import Data.Coerce
 
 newtype SF a b = SF (a -> (SF a b, b))
 
 -- | the constructor with storage
 newSF :: (s -> a -> (SF a b, b)) -> s -> SF a b
 {-# INLINE newSF #-}
-newSF f s = coerce (f s)
--- newSF f s = SF (f s)
+newSF f s = SF (f s)
+-- newSF f s = coerce (f s)
+
 
 -- | the simple constructor
 simpleSF :: (s -> a -> (s, b)) -> s -> SF a b
