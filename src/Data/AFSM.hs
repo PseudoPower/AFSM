@@ -21,11 +21,11 @@ module Data.AFSM (
 ) where
 
 
-  import Control.Arrow
+import Control.Arrow
 
-  import Data.AFSM.SF
-  import Data.AFSM.SFM
-  import Data.AFSM.ThreadSF
+import Data.AFSM.SF
+import Data.AFSM.SFM
+import Data.AFSM.ThreadSF
 
 
 

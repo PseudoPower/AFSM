@@ -62,7 +62,7 @@ clockSF :: (Int, Int, Int) -> SF Int [(Int,Int,Int)]
 clockSF (h',m',s') = proc w -> do
   (s,sb) <- secondSF s' -< w
   (m,mb) <- minuteSF m' -< sb
-  (h,hb) <- hourSF   h'  -< mb
+  (h,hb) <- hourSF   h' -< mb
   returnA -< [(h,m,s)]
 
 black, white, red, green, blue :: V4 Word8
@@ -79,6 +79,7 @@ timerCallback ch interval = do
 
 renderOutput :: SDL.Renderer -> (Int, Int, Int) -> IO ()
 renderOutput renderer (h,m,s) = do
+  putStrLn $ show (h,m,s)
   SDL.rendererDrawColor renderer $= white
   SDL.clear renderer
   SDL.rendererDrawColor renderer $= black
@@ -94,7 +95,6 @@ renderOutput renderer (h,m,s) = do
       c = (1 - fromIntegral h / 6 - fromIntegral m / 360) * pi; 
       xh = x + round (100 * (sin c)); 
       yh = y + round (100 * (cos c));
-  putStrLn $ show (h,m,s)
   SDL.rendererDrawColor renderer $= red
   SDL.drawLine renderer (P (V2 x y)) (P (V2 xs ys))
   SDL.rendererDrawColor renderer $= green
@@ -148,12 +148,7 @@ main = do
   SDL.destroyWindow window
 
   SDL.quit
---   
---  window <- SDL.createWindow "Demo" SDL.defaultWindow { SDL.windowInitialSize = V2 800 600 }
---  SDL.showWindow window
---  renderer <- SDL.createRenderer window (-1) SDL.defaultRenderer
-  
-  
+
   
 
 
