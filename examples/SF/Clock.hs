@@ -21,8 +21,7 @@ import Control.Arrow
 import Control.Applicative
 import Control.Monad
 
-import Data.SF
-import Data.SF.IOSF
+import Data.AFSM
 
 import Control.Concurrent
 import Control.Concurrent.STM
@@ -119,7 +118,7 @@ main = do
       now = (hour, minute, second);
   
   tc <- newBroadcastTChanIO
-  clock <- newThreadSF $ clockSF now
+  clock <- sf2TSF $ clockSF now
   (tids, ret) <- clock tc
   tid <- forkOS $ outputTChan ret (renderOutput renderer)
   SDL.addTimer 1000 (timerCallback tc)

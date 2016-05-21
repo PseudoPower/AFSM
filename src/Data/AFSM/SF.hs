@@ -1,6 +1,6 @@
 -----------------------------------------------------------------------------
 -- |
--- Module      :  Data.SF
+-- Module      :  Data.AFSM.SF
 -- Copyright   :  (c) Hanzhong Xu, Meng Meng 2016,
 -- License     :  MIT License
 --
@@ -12,7 +12,7 @@
 --   It is the same with SMH, and it just removes the empty storage.
 -----------------------------------------------------------------------------
 
-module Data.SF (
+module Data.AFSM.SF (
   
   SF(..),
   newSF,
@@ -47,7 +47,7 @@ module Data.SF (
 import Control.Category
 import Control.Arrow
 
-import Data.SF.CoreType
-import Data.SF.Core
-import Data.SF.STF
-import Data.SF.FunctorSF
+import Data.AFSM.SF.CoreType
+import Data.AFSM.SF.Core
+import Data.AFSM.SF.STF
+import Data.AFSM.SF.FunctorSF

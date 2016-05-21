@@ -1,25 +1,20 @@
 -----------------------------------------------------------------------------
 -- |
--- Module      :  Data.SFM
+-- Module      :  Data.AFSM.ThreadSF
 -- Copyright   :  (c) Hanzhong Xu, Meng Meng 2016,
 -- License     :  MIT License
 --
 -- Maintainer  :  hanzh.xu@gmail.com
 -- Stability   :  experimental
 -- Portability :  portable
---
--- Stateful functions with Monad
---
 -----------------------------------------------------------------------------
 
-module Data.SFM (
-  
+
+module Data.AFSM.ThreadSF (
+  module Data.AFSM.ThreadSF.CoreType,
+  module Data.AFSM.ThreadSF.IOSF,
 ) where
 
-import Control.Category
-import Control.Arrow
+import Data.AFSM.ThreadSF.CoreType
+import Data.AFSM.ThreadSF.IOSF
 
-import Data.SFM.CoreType
-import Data.SFM.Core
-import Data.SFM.STFM
-import Data.SFM.FunctorSFM

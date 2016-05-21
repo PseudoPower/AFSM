@@ -14,8 +14,7 @@ module Main where
 import Control.Arrow
 import Control.Monad
 
-import Data.SF
-import Data.SF.SFM
+import Data.SFM
 import Data.Maybe
 import Data.Time.Clock
 
@@ -28,11 +27,12 @@ timerSFM a n = do
     where
       f t () = do
         t' <- getCurrentTime
-        if truncate (diffUTCTime t' t) < n then return (t, Nothing)
-        else return (t', Just a)
+        if truncate (diffUTCTime t' t) < n then
+          return (t, Nothing)
+        else do
+          -- putStrLn $ show $ (diffUTCTime t' t) 
+          return (t', Just a)
         
-test =  (timerSFM 1 10) >>= simpleSrcM
       
 main = do
-  test >>= (\xs -> forM_ xs (putStrLn.show))
   return ()

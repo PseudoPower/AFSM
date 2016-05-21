@@ -1,22 +1,28 @@
 -----------------------------------------------------------------------------
 -- |
--- Module      :  Data.SF.Auto
+-- Module      :  Data.AFSM.SFM
 -- Copyright   :  (c) Hanzhong Xu, Meng Meng 2016,
 -- License     :  MIT License
 --
 -- Maintainer  :  hanzh.xu@gmail.com
 -- Stability   :  experimental
 -- Portability :  portable
+--
+-- Stateful functions with Monad
+--
 -----------------------------------------------------------------------------
 
--- {-# LANGUAGE ExistentialQuantification #-}
+module Data.AFSM.SFM (
+  SFM(..),
+  newSFM,
+  simpleSFM,
 
-module Data.SF.Auto where
+) where
 
 import Control.Category
 import Control.Arrow
-import Control.Monad
 
--- | Control.Arrow.Transformer.Automaton
--- data Auto f a b = forall f. (Arrow f) => Auto (f a (Auto f a b, b))
-data Auto f a b = Auto (f a (Auto f a b, b))
+import Data.AFSM.SFM.CoreType
+import Data.AFSM.SFM.Core
+-- import Data.SFM.STFM
+-- import Data.SFM.FunctorSFM

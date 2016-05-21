@@ -1,6 +1,6 @@
 -----------------------------------------------------------------------------
 -- |
--- Module      :  Data.SF.Draft.IOSF
+-- Module      :  Data.AFSM.ThreadSF.IOSFM
 -- Copyright   :  (c) Hanzhong Xu, Meng Meng 2016,
 -- License     :  MIT License
 --
@@ -9,9 +9,9 @@
 -- Portability :  portable
 -----------------------------------------------------------------------------
 
-{-# LANGUAGE ExistentialQuantification #-}
-
-module Data.SF.IOSFM where
+module Data.AFSM.ThreadSF.IOSFM (
+  sfm2ThreadSF,
+) where
 
 import Control.Category
 import Control.Arrow
@@ -26,18 +26,8 @@ import Data.IORef
 
 import Data.Foldable hiding (sequence_)
 
-import Data.SF.SFM
-
-writeList2TChan :: TChan a -> [a] -> IO ()
-writeList2TChan ch ls = sequence_ (map (\x -> atomically $ writeTChan ch x) ls)
-
-outputTChan :: TChan a -> (a -> IO ()) -> IO ()
-outputTChan ch f = do
-  mych <- atomically $ dupTChan ch
-  forever $ do
-    a <- atomically $ readTChan mych
-    f a
-    
+import Data.AFSM.SFM
+import Data.AFSM.ThreadSF.CoreType
     
 data IOSFM a b = forall t. Foldable t => IOSFM (IORef (SFM IO a (t b))) (b -> IO ())
 
@@ -56,9 +46,6 @@ newTChanSFM sf = do
   o <- newBroadcastTChanIO
   s <- newIORef sf
   return $ TChanSFM (IOSFM s (\b -> atomically $ writeTChan o b)) o
-
-
-type ThreadSF a b = (TChan a) -> IO (TChan b)
 
 fromTChanSFM :: TChanSFM a b -> ThreadSF a b
 fromTChanSFM (TChanSFM sf tb) ta = do

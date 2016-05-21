@@ -1,6 +1,6 @@
 -----------------------------------------------------------------------------
 -- |
--- Module      :  Data.SF.STF
+-- Module      :  Data.AFSM.SF.STF
 -- Copyright   :  (c) Hanzhong Xu, Meng Meng 2016,
 -- License     :  MIT License
 --
@@ -9,13 +9,13 @@
 -- Portability :  portable
 -----------------------------------------------------------------------------
 
-module Data.SF.STF where
+module Data.AFSM.SF.STF where
 
 
 import Control.Category
 import Control.Arrow
 
-import Data.SF.CoreType
+import Data.AFSM.SF.CoreType
 
 instance Category (STF s) where
   id = idSTF

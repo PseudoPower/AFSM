@@ -1,6 +1,6 @@
 -----------------------------------------------------------------------------
 -- |
--- Module      :  Data.SF.Core
+-- Module      :  Data.AFSM.SF.Core
 -- Copyright   :  (c) Hanzhong Xu, Meng Meng 2016,
 -- License     :  MIT License
 --
@@ -11,12 +11,12 @@
 
 {-# LANGUAGE BangPatterns #-}
 
-module Data.SF.Core where
+module Data.AFSM.SF.Core where
 
 import Control.Category
 import Control.Arrow
 
-import Data.SF.CoreType
+import Data.AFSM.SF.CoreType
 
 -- | Source
 

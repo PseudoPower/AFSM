@@ -1,6 +1,6 @@
 -----------------------------------------------------------------------------
 -- |
--- Module      :  Data.SF.CoreType
+-- Module      :  Data.AFSM.SF.CoreType
 -- Copyright   :  (c) Hanzhong Xu, Meng Meng 2016,
 -- License     :  MIT License
 --
@@ -9,7 +9,7 @@
 -- Portability :  portable
 -----------------------------------------------------------------------------
 
-module Data.SF.CoreType where
+module Data.AFSM.SF.CoreType where
 
 newtype SF a b = SF (a -> (SF a b, b))
 

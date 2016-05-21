@@ -1,6 +1,6 @@
 -----------------------------------------------------------------------------
 -- |
--- Module      :  Data.SF.FunctorSF
+-- Module      :  Data.AFSM.SF.FunctorSF
 -- Copyright   :  (c) Hanzhong Xu, Meng Meng 2016,
 -- License     :  MIT License
 --
@@ -9,13 +9,13 @@
 -- Portability :  portable
 -----------------------------------------------------------------------------
 
-module Data.SF.FunctorSF where
+module Data.AFSM.SF.FunctorSF where
 
 import Control.Category
 import Control.Monad
 
-import Data.SF.CoreType
-import Data.SF.Core
+import Data.AFSM.SF.CoreType
+import Data.AFSM.SF.Core
 
 infixl 1  >>>=
 infixr 1  =<<<
