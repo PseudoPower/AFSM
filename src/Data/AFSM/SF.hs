@@ -37,8 +37,11 @@ module Data.AFSM.SF (
   dropSF,
   filterSF,
 
+  -- module Data.AFSM.SF.FunctorSF,
   FunctorSF(..),
   (>>>=), (=<<<),
+  (>==>), (<==<),
+  sfbind,
   execSF,
   bindSF,
   

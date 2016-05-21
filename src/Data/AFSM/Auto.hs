@@ -21,6 +21,10 @@ import Control.Monad
 -- data Auto f a b = forall f. (Arrow f) => Auto (f a (Auto f a b, b))
 -- data Auto f a b = Auto (f a (Auto f a b, b))
 
+-- | Control.Auto
+-- data Auto m a b = Auto (a -> m (Auto m a b, b))
+
+{-
 class Auto z where
   build :: (a -> (z a b, b)) -> z a b
   step :: (z a b) -> a -> (z a b, b)
@@ -39,3 +43,6 @@ composeAuto zbc zab = build f
       where
         (zab', b) = step zab a
         (zbc', c) = step zbc b
+        
+-}        
+        

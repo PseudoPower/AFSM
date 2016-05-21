@@ -9,7 +9,18 @@
 -- Portability :  portable
 -----------------------------------------------------------------------------
 
-module Data.AFSM.SF.FunctorSF where
+module Data.AFSM.SF.FunctorSF (
+  FunctorSF(..),
+  execSF,
+  sfbind,
+  (>>>=),
+  (=<<<),
+  bindSF,
+  (<==<),
+  (>==>),
+) where
+
+import Prelude hiding ((.))
 
 import Control.Category
 import Control.Monad
@@ -17,8 +28,10 @@ import Control.Monad
 import Data.AFSM.SF.CoreType
 import Data.AFSM.SF.Core
 
-infixl 1  >>>=
-infixr 1  =<<<
+infixl 1 >>>=
+infixr 1 =<<<
+infixr 1 <==<
+infixr 1 >==>
 
 class FunctorSF f where
   sfexec :: SF a b -> f a -> (SF a b, f b)
@@ -61,8 +74,6 @@ execSF sf = SF (f1 sf)
     f1 sf fa = (SF (f1 sf'), fb)
       where 
         (sf', fb) = sfexec sf fa
-      
-
 
       
 sfbind :: (Monad m, FunctorSF m) => m a -> SF a (m b) -> (SF a (m b), m b)
@@ -74,7 +85,7 @@ sfbind ma sf = (sf', join mmb)
 (>>>=) ma sf = join $ sfmap sf ma
 
 (=<<<) :: (Monad m, FunctorSF m) => SF a (m b) -> m a -> m b
-(=<<<) sf ma = ma >>>= sf
+(=<<<) sf ma = join $ sfmap sf ma
 
 bindSF :: (Monad m, FunctorSF m) => SF a (m b) -> SF (m a) (m b)
 bindSF sf = newSF f1 sf
@@ -82,4 +93,10 @@ bindSF sf = newSF f1 sf
     f1 sf ma = (newSF f1 sf', join mmb)
       where 
         (sf', mmb) = sfexec sf ma
-    
+
+(<==<) :: (Monad m, FunctorSF m) => SF b (m c) -> SF a (m b) -> SF a (m c)
+(<==<) sf1 sf0 = (bindSF sf1).sf0
+
+(>==>) :: (Monad m, FunctorSF m) => SF a (m b) -> SF b (m c) -> SF a (m c)
+(>==>) sf0 sf1 = (bindSF sf1).sf0
+
