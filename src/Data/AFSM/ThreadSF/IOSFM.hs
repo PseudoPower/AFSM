@@ -9,6 +9,8 @@
 -- Portability :  portable
 -----------------------------------------------------------------------------
 
+{-# LANGUAGE ExistentialQuantification #-}
+
 module Data.AFSM.ThreadSF.IOSFM (
   sfm2TSF,
 ) where
@@ -50,10 +52,10 @@ newTChanSFM sf = do
 fromTChanSFM :: TChanSFM a b -> ThreadSF a b
 fromTChanSFM (TChanSFM sf tb) ta = do
   myta <- atomically $ dupTChan ta
-  (forkIO $ forever $ do
+  tid <- (forkIO $ forever $ do
     a <- atomically $ readTChan myta
     runIOSFM sf a)
-  return tb
+  return ([tid], tb)
 
 sfm2TSF :: Foldable t => SFM IO a (t b) -> IO (ThreadSF a b)
 sfm2TSF sf = do
