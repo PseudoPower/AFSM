@@ -141,6 +141,16 @@ There are two similar implementation now. One is keeping the storage type and is
 `data STF s a b = STF (s -> a -> ((STF s a b, s), b))`
   * `transSTF2SF :: STF s a b -> s -> SF a b`
   * `instance Arrow STF`
+  
+`newtype SFM m a b = SFM (a -> m (SFM m a b, b))`
+  * `newSFM :: (Monad m) => (s -> a -> m (SFM m a b, b)) -> s -> m (SFM m a b)`
+  * `simpleSFM :: (Monad m) => (s -> a -> m (s, b)) -> s -> m (SFM m a b)`
+  * `instance Monad m => Arrow (SFM m)`
+  
+`type ThreadSF a b = (TChan a) -> IO ([ThreadId], TChan b)`
+  * `sf2TSF :: Foldable t => SF a (t b) -> IO (ThreadSF a b)`
+  * `sfm2TSF :: Foldable t => SFM IO a (t b) -> IO (ThreadSF a b)`
+  * `idTSF :: ThreadSF a a` and `composeTSF :: ThreadSF b c -> ThreadSF a b -> ThreadSF a c`
 
 ## Examples
 
@@ -164,7 +174,9 @@ To run this example, just type `make RPN` or `ghci examples/RPN.hs -isrc/`. The 
 
 It is also known as postfix notation, and it is very straightforward example. The input is the infix expression, and the output is the value. First, we build a SM named in2post to convert infix notation to postfix expression. Then we build a SM named post2ret to evaluate the values. Finally, we use them to compose `in2ret = in2post >>> post2ret`.
 
+### Clock([Clock.hs](https://github.com/PseudoPower/AFSM/blob/master/examples/SF/Clock.hs))
 
+A Clock implementation using `SDL2` library. It shows how to use `ThreadSF`.
 
 ## To-Do
   * Basic state machines (continuous adding some new SMs.)

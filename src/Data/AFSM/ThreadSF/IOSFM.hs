@@ -10,7 +10,7 @@
 -----------------------------------------------------------------------------
 
 module Data.AFSM.ThreadSF.IOSFM (
-  sfm2ThreadSF,
+  sfm2TSF,
 ) where
 
 import Control.Category
@@ -55,7 +55,7 @@ fromTChanSFM (TChanSFM sf tb) ta = do
     runIOSFM sf a)
   return tb
 
-sfm2ThreadSF :: Foldable t => SFM IO a (t b) -> IO (ThreadSF a b)
-sfm2ThreadSF sf = do
+sfm2TSF :: Foldable t => SFM IO a (t b) -> IO (ThreadSF a b)
+sfm2TSF sf = do
   tsf <- newTChanSFM sf
   return $ fromTChanSFM tsf
