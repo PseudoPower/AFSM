@@ -75,8 +75,18 @@ filterSF chk = newSF f chk
   where
     f chk a = (newSF f chk, if chk a then Event a else NoEvent)
 
+sfstep :: SF a b -> a -> (SF a b, b)
+sfstep (SF f) a = f a 
 
+instance Functor (SF a) where
+  fmap = fmapSF
 
+fmapSF :: (b -> c) -> SF a b -> SF a c
+fmapSF f1 (SF f0) = SF (f2 f0)
+  where
+    f2 f0 a = (SF (f2 f0'), f1 b)
+      where
+        (SF f0', b) = f0 a
     
 -- Category instance
 
