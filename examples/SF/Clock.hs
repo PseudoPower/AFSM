@@ -59,8 +59,8 @@ hourSF = simpleSF (\s x -> if x then let s' = mod (s + 1) 12 in (s', (s', s' == 
 
 
 clockSF :: (Int, Int, Int) -> SF Int [(Int,Int,Int)]
-clockSF (h',m',s') = proc w -> do
-  (s,sb) <- secondSF s' -< w
+clockSF (h',m',s') = proc ms -> do
+  (s,sb) <- secondSF s' -< ms
   (m,mb) <- minuteSF m' -< sb
   (h,hb) <- hourSF   h' -< mb
   returnA -< [(h,m,s)]
