@@ -83,18 +83,18 @@ renderOutput renderer (h,m,s) = do
   SDL.rendererDrawColor renderer $= white
   SDL.clear renderer
   SDL.rendererDrawColor renderer $= black
-  SDL.drawRect renderer (Just (SDL.Rectangle (P (V2 200 100)) (V2 400 400)))
-  let x = 400; 
-      y = 300; 
+  SDL.drawRect renderer (Just (SDL.Rectangle (P (V2 50 50)) (V2 200 200)))
+  let x = 150; 
+      y = 150; 
       a = (1 - fromIntegral s / 30) * pi; 
-      xs = x + round (200 * (sin a)); 
-      ys = y + round (200 * (cos a));
+      xs = x + round (100 * (sin a)); 
+      ys = y + round (100 * (cos a));
       b = (1 - fromIntegral m / 30) * pi; 
-      xm = x + round (150 * (sin b)); 
-      ym = y + round (150 * (cos b));
+      xm = x + round (70 * (sin b)); 
+      ym = y + round (70 * (cos b));
       c = (1 - fromIntegral h / 6 - fromIntegral m / 360) * pi; 
-      xh = x + round (100 * (sin c)); 
-      yh = y + round (100 * (cos c));
+      xh = x + round (40 * (sin c)); 
+      yh = y + round (40 * (cos c));
   SDL.rendererDrawColor renderer $= red
   SDL.drawLine renderer (P (V2 x y)) (P (V2 xs ys))
   SDL.rendererDrawColor renderer $= green
@@ -106,7 +106,7 @@ renderOutput renderer (h,m,s) = do
 main :: IO ()
 main = do
   SDL.initializeAll
-  window <- SDL.createWindow "Clock" SDL.defaultWindow { SDL.windowInitialSize = V2 800 600 }
+  window <- SDL.createWindow "Clock" SDL.defaultWindow { SDL.windowInitialSize = V2 300 300 }
   renderer <- SDL.createRenderer window (-1) SDL.defaultRenderer
   
   time <- getCurrentTime

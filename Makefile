@@ -3,3 +3,6 @@ RPN :
 
 Toys :
 		ghci examples/SM/Toys.hs -isrc/
+
+Clock :
+		ghci examples/SF/Clock.hs -isrc/ -threaded
