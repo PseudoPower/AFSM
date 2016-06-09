@@ -13,10 +13,13 @@
 
 module Data.AFSM.SF.Core where
 
+import Prelude hiding ((.))
+import Control.Applicative
 import Control.Category
 import Control.Arrow
 
 import Data.AFSM.SF.CoreType
+
 
 -- | Source
 
@@ -78,6 +81,8 @@ filterSF chk = newSF f chk
 sfstep :: SF a b -> a -> (SF a b, b)
 sfstep (SF f) a = f a 
 
+-- Functor instance
+
 instance Functor (SF a) where
   fmap = fmapSF
 
@@ -87,7 +92,42 @@ fmapSF f1 (SF f0) = SF (f2 f0)
     f2 f0 a = (SF (f2 f0'), f1 b)
       where
         (SF f0', b) = f0 a
-    
+        
+-- Applicative instance
+
+instance Applicative (SF a) where
+  pure = constSF
+  (<*>) = seqAppSF 
+  
+seqAppSF :: SF c (a -> b) -> SF c a -> SF c b       
+seqAppSF (SF f0) (SF f1) = SF (f2 f0 f1)
+  where
+    f2 f0 f1 c = (SF (f2 f0' f1'), f a)
+      where
+        (SF f0', f) = f0 c
+        (SF f1', a) = f1 c
+
+instance Monoid b => Monoid (SF a b) where
+  mempty = pure mempty
+  mappend = liftA2 mappend
+{-
+  mempty = constSF mempty
+  mappend sf0 sf1 = (sf0 &&& sf1) >>> (arr f)
+    where
+      f :: Monoid b => (b, b) -> b
+      f (x,y) = mappend x y
+-}   
+
+instance Num b => Num (SF a b) where
+  (+) = liftA2 (+)
+  (-) = liftA2 (-)
+  (*) = liftA2 (*)
+  negate = fmap negate
+  abs = fmap abs
+  signum = fmap signum
+  fromInteger = pure . fromInteger   
+ 
+
 -- Category instance
 
 instance Category SF where
